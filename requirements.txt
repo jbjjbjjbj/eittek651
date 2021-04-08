@@ -1,0 +1,9 @@
+numpy
+matplotlib
+scipy
+pandas
+xlrd
+numba
+mypy
+pylint
+flake8
