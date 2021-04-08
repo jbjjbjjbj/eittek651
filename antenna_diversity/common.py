@@ -3,6 +3,7 @@ Defines som common functions and shorthand functions used across modules.
 """
 import math
 import scipy.stats
+import graycode
 
 
 def q_function(x: float) -> float:
@@ -29,15 +30,12 @@ def db_from_power(power: float) -> float:
 class GrayEncoder:
 
     def __init__(self, M):
-        if M == 4:
-            self.lookup = [0, 1, 3, 2]
-        elif M == 16:
-            self.lookup = [0, 1, 3, 2, 6, 7, 5, 4, 12, 13, 15, 14, 10, 11, 9, 8]
-        else:
-            raise f"Can't Gray Encode for {M} bits"
+        self.lookup = graycode.gen_gray_codes(int(math.log2(M)))
 
     def encode(self, a):
         return self.lookup[a]
 
     def decode(self, a):
         return self.lookup.index(a)
+
+
