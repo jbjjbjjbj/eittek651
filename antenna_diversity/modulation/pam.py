@@ -3,6 +3,7 @@ Simulates M-PAM modulation
 """
 
 from .. import common
+from .. import encoding
 import numpy as np
 import math
 
@@ -14,11 +15,11 @@ def generate_lookup(M):
     >>> generate_lookup(4)
     [-3, -1, 1, 3]
     """
-    res = np.empty(M)
+    res = []
     for i in range(M):
         m = i+1
         # Fleury and Land p. 59
-        res[i] = 2 * m - M - 1
+        res.append(2 * m - M - 1)
     return res
 
 
@@ -26,7 +27,7 @@ class PAM:
     def __init__(self, M):
         self.__M = M
         self.lol = M
-        self.gray = common.GrayEncoder(M)
+        self.gray = encoding.GrayEncoder(M)
         self.constellation = generate_lookup(M)
 
     def modulate(self, symbol, energy=1):
