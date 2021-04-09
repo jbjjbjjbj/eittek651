@@ -1,6 +1,12 @@
 # eittek651
 Yo hvordan sker det
 
+## Install Libraries
+
+```
+pip3 install -r requirements.txt
+```
+
 ## Quick Start
 
 ```
