@@ -13,6 +13,12 @@ $ python -m antenna_diversity
 $ python test.py
 ```
 
+## Check Types
+
+```
+$ mypy antenna_diversity/
+```
+
 ## Misc
 
 Remember to write things that should be exposed to the user in the relevant `__init__.py` file.
