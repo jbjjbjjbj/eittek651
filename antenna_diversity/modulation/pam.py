@@ -2,12 +2,14 @@
 Simulates M-PAM modulation
 """
 
-from typing import List
+import numpy as np
+import typing as t
+import math
 
 from .constellmod import ConstellationModulator
 
 
-def generate_lookup(M: int) -> List[int]:
+def generate_lookup(M: int) -> t.List[int]:
     """
     Generates a lookup table.
     Example:
@@ -23,5 +25,6 @@ def generate_lookup(M: int) -> List[int]:
 
 
 class PAM(ConstellationModulator):
-    def generate_constellation(self) -> List[int]:
-        return generate_lookup(self.M)
+    def generate_constellation(self, energy: float) -> np.ndarray:
+        d = math.sqrt(3 * energy / (self.M**2 - 1))
+        return np.array(generate_lookup(self.M)) * d

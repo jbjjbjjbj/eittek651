@@ -1,10 +1,9 @@
 from .. import encoding
 
-import math
 import numpy as np
-import numpy.typing as npt
 
 import typing as t
+
 
 class ConstellationModulator:
     """
@@ -26,10 +25,9 @@ class ConstellationModulator:
             self.encoder = encoding.NoEncoder()
 
         # Calculate the constellation
-        d = math.sqrt(3 * energy / (self.M**2 - 1))
-        self.constellation = np.array(self.generate_constellation()) * d
+        self.constellation = np.array(self.generate_constellation(energy))
 
-    def modulate(self, symbols: npt.ArrayLike) -> npt.ArrayLike:
+    def modulate(self, symbols: np.ndarray) -> np.ndarray:
         # make d scale mean symbol energy
         encoded = self.encoder.encode(symbols)
         return self.constellation[encoded]
@@ -43,7 +41,7 @@ class ConstellationModulator:
         estimated_symbols = np.argmin(distances, 1)
         return self.encoder.decode(estimated_symbols)
 
-    def generate_constellation(self) -> t.List[int]:
+    def generate_constellation(self, energy: float) -> np.ndarray:
         # Just create a dummy constellation
         raise Exception(f"Dummy constellation generator not overwritten by {self.__class__.__name__}")
         return np.zeros(self.M)
