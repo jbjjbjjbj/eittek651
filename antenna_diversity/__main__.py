@@ -13,3 +13,4 @@ if __name__ == "__main__":
 
     my_demodulated = my_pam.demodulate(my_modulated)
     print(my_demodulated)
+   
