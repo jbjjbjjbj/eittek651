@@ -3,8 +3,8 @@ let
   mach-nix = import (
     builtins.fetchGit {
       url = "https://github.com/DavHau/mach-nix/";
-      ref = "refs/tags/3.1.1";
-      rev = "1ec92303acd142aa1a3b60bb97745544cf049312";
+      ref = "refs/tags/3.2.0";
+      rev = "ac62255e8112e547432ca0f09bfe8f4d1920fbb8";
     }
   ) {};
 
@@ -15,6 +15,7 @@ in
 pkgs.mkShell {
   buildInputs = [
     pips
+    pkgs.python39
   ];
 
 }
