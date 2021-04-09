@@ -3,9 +3,18 @@ from . import common
 from . import modulation
 
 if __name__ == "__main__":
+
+
+
     my_pam = modulation.PAM(4)
 
-    my_symbols = np.random.randint(0, 4, size=100)
+    #          | pS | S | A |    B | X| Z|
+    # np.array([1, 0, 0, 1, 1, 1, 1, 1, 1])
+
+    dect_packet = protocols.DECT().full(payload)
+
+    my_symbols = encode(dect_packet)
+
     print(my_symbols)
 
     my_modulated = my_pam.modulate(my_symbols)
