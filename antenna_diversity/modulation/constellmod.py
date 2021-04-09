@@ -1,8 +1,9 @@
 from .. import encoding
 
 import numpy as np
-
 import typing as t
+
+import matplotlib.pyplot as plt
 
 
 class ConstellationModulator:
@@ -45,3 +46,10 @@ class ConstellationModulator:
         # Just create a dummy constellation
         raise Exception(f"Dummy constellation generator not overwritten by {self.__class__.__name__}")
         return np.zeros(self.M)
+
+    def save_constellation(self, where: str) -> None:
+        plt.xlabel("I")
+        plt.ylabel("Q")
+
+        plt.scatter(np.real(self.constellation), np.imag(self.constellation))
+        plt.savefig(where)
