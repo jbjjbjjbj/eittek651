@@ -6,7 +6,6 @@ from numpy.typing import ArrayLike
 
 def gen_bits(nbits: int) -> List[int]:
     """
-    
     example:
     >>> gen_bits(2)
     [0, 1, 3, 2]
