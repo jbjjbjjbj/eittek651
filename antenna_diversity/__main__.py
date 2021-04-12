@@ -11,7 +11,7 @@ if __name__ == "__main__":
 
     my_modulated = my_pam.modulate(my_symbols)
     print("modulated", my_modulated)
-    my_modulated = AWGN(my_modulated,10)
+    my_modulated = AWGN(my_modulated,15)
 
     my_demodulated = my_pam.demodulate(my_modulated)
     print(my_demodulated)
