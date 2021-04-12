@@ -7,16 +7,22 @@ Yo hvordan sker det
 pip3 install -r requirements.txt
 ```
 
+If the pip3 utility is not in your path but `python3` is, use the following.
+
+```
+python3 -m pip install -r requirements.txt
+```
+
 ## Quick Start
 
 ```
-$ python -m antenna_diversity
+$ python3 -m antenna_diversity
 ```
 
 ## Run Tests
 
 ```
-$ python test.py
+$ python3 test.py
 ```
 
 ## Check Types
