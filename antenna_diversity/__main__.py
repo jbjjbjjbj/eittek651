@@ -16,13 +16,12 @@ if __name__ == "__main__":
     my_gray_symbols = my_gray.encode(my_symbols)
 
     my_modulated = my_pam.modulate(my_gray_symbols)
-    # print("modulated", my_modulated)
+    print("modulated", my_modulated)
 
     my_demodulated = my_pam.demodulate(my_modulated)
     my_demodulated = my_gray.decode(my_demodulated)
 
-    # print(my_demodulated)
+    print(my_demodulated)
 
     if not np.array_equal(my_demodulated, my_symbols):
         print("THE ARRAYS DIFFER")
-

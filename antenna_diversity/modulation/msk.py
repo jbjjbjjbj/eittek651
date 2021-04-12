@@ -17,9 +17,11 @@ def vector_encode(symbols: np.ndarray) -> np.ndarray:
     for i in range(1, n):
         vbit[i] = vbit[i-1] ^ ubit[i-1]
         res[i-1] = (ubit[i-1] << 1) | vbit[i-1]
-        pass
 
-    res[n-1] = vbit[n-1]
+    # Page 141 lecturenotes fleury and land
+    # Make last U bit equal to last V bit, such that the final state VL = 0
+    lastUbit = vbit[n-1]
+    res[n-1] = (lastUbit << 1) | vbit[n-1]
     return res
 
 
