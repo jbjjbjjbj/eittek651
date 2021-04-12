@@ -9,10 +9,10 @@ def generate_psk_constellation(M: int) -> t.List[complex]:
     Generate M-ary PSK constellation
 
     Example:
-    >>> list(map(lambda x: np.round(x), generate_psk_constellation(4)))
+    >>> [np.round(x) for x in generate_psk_constellation(4)]
     [(1+0j), 1j, (-1+0j), (-0-1j)]
     """
-    # Taken from lecture_notes
+    # Cite Fleury and Land p. 89 
     precalc = 2 * math.pi / M
     def phi_m_g(m): return (m-1) * precalc
 
