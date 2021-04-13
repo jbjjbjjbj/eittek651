@@ -1,6 +1,6 @@
 import numpy as np
 from . import modulation
-from .noise import AWGN
+from .rayleigh_fading import rayleigh
 
 if __name__ == "__main__":
     my_pam = modulation.PSK(4)
@@ -11,7 +11,7 @@ if __name__ == "__main__":
 
     my_modulated = my_pam.modulate(my_symbols)
     print("modulated", my_modulated)
-    my_modulated = AWGN(my_modulated,15)
+    my_modulated = rayleigh(my_modulated,21)
 
     my_demodulated = my_pam.demodulate(my_modulated)
     print(my_demodulated)
