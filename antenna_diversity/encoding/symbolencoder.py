@@ -5,52 +5,6 @@ import typing as t
 # M = 2, 4, 16, 256
 M_allowlist: t.List[int] = [2, 4, 16, 256]
 
-"""
-# Explanation of encoder
-
-The encoder encodes using vectorized operations.
-This works by extracting bits from each element one bit at the time.
-
-```python
-bits = np.bitwise_and(input, 1)
-```
-
-This will extract the first bit of each byte.
-When working LSB first, we want these bits to map to each index `(i % 8)`.
-This is done by utilizing numpy matrixes, where we write each bit sequence
-to the row in a matrix corrosponding to the bit index.
-
-For example if we pull the first bit from each byte in input=[0xF5, 3] and save
-it to `bits`, we can place it in the first row of matrix:
-
-```python
-[[0, 1],
- [0, 0],
- [0, 0],
- [0, 0],
- [0, 0],
- [0, 0],
- [0, 0],
- [0, 0]]
-```
-
-If we do this for every bit we get:
-
-```python
-dest = [[1, 1],
-        [0, 1],
-        [1, 0],
-        [0, 0],
-        [1, 0],
-        [1, 0],
-        [1, 0],
-        [1, 0]]
-```
-
-We can see that if we concat each column we get the correct bit sequence.
-This concatination is done with `dest.transpose().flatten()`.
-"""
-
 
 def gen_mask(n: int) -> int:
     """
@@ -94,6 +48,59 @@ def mask_msb_first(byts: np.ndarray, n: int, index: int) -> np.ndarray:
 
 
 class SymbolEncoder:
+    """
+    Encodes a numpy list of bytes and returns them as symbols.
+    Symbols can go from [0, M[, where a larger M will encode more bits in
+    each symbol.
+
+    Because of the underlying implementation M can only take
+    the values 2,4,16,256
+
+    Explanation:
+
+    The encoder encodes using vectorized operations.
+    This works by extracting bits from each element one bit at the time.
+
+    ```python
+    bits = np.bitwise_and(input, 1)
+    ```
+
+    This will extract the first bit of each byte.
+    When working LSB first, we want these bits to map to each index `(i % 8)`.
+    This is done by utilizing numpy matrixes, where we write each bit sequence
+    to the row in a matrix corrosponding to the bit index.
+
+    For example if we pull the first bit from each byte in input=[0xF5, 3] and
+    save it to `bits`, we can place it in the first row of matrix:
+
+    ```python
+    [[1, 1],
+     [0, 0],
+     [0, 0],
+     [0, 0],
+     [0, 0],
+     [0, 0],
+     [0, 0],
+     [0, 0]]
+    ```
+
+    If we do this for every bit we get:
+
+    ```python
+    dest = [[1, 1],
+            [0, 1],
+            [1, 0],
+            [0, 0],
+            [1, 0],
+            [1, 0],
+            [1, 0],
+            [1, 0]]
+    ```
+
+    We can see that if we concat each column we get the correct bit sequence.
+    This concatination is done with `dest.transpose().flatten()`.
+    """
+
     def __init__(self, M: int) -> None:
 
         if M not in M_allowlist:
