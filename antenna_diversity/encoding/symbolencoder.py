@@ -8,6 +8,12 @@ M_allowlist: t.List[int] = [2, 4, 16, 256]
 
 def gen_mask(n: int) -> int:
     """
+    Will create a n bit long mask.
+
+    This works by creating a byte with a 1 at the n+1 place.
+    Subtracting this with one will make all previus bits 1, thus creating
+    a byte with the first n bits set.
+
     >>> bin(gen_mask(3))
     '0b111'
     >>> bin(gen_mask(2))
