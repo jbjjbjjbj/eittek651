@@ -112,7 +112,7 @@ class SymbolEncoder:
         print(self.syms_per_byte)
 
     def encode(self, byts: np.ndarray) -> np.ndarray:
-        dest = np.zeros([self.syms_per_byte, len(byts)])
+        dest = np.empty([self.syms_per_byte, len(byts)])
 
         for i in range(self.syms_per_byte):
             # Take the nbits MSB, which forms symbols
