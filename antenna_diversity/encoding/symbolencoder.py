@@ -26,7 +26,7 @@ def gen_mask(n: int) -> int:
 
 def mask_msb_first(byts: np.ndarray, n: int, index: int) -> np.ndarray:
     """
-    Will mask out the index'th n bit from byts.
+    Will return the index'th n bits from byts.
     Undefined behavior if 8 is not divisible by n
 
     >>> bin(mask_msb_first(0xDE, 2, 3))
@@ -146,4 +146,3 @@ class SymbolEncoder:
             return self.encode_msb(byts)
         else:
             raise Exception("LSB encoding not supported yet")
-
