@@ -127,7 +127,10 @@ class SymbolEncoder:
 
         self.syms_per_byte = int(8 // self.nbits)
 
-    def encode_msb(self, byts: np.ndarray) -> np.ndarray:
+    def encode_msb(self, byts: bytes) -> np.ndarray:
+        # Convert to numpy array
+        byts = np.frombuffer(byts, dtype=np.ubyte)
+
         dest = np.empty([self.syms_per_byte, len(byts)], dtype=np.ubyte)
 
         for i in range(self.syms_per_byte):
@@ -141,7 +144,7 @@ class SymbolEncoder:
         symbols = dest.transpose().flatten()
         return symbols
 
-    def decode_msb(self, symbols: np.ndarray) -> np.ndarray:
+    def decode_msb(self, symbols: np.ndarray) -> bytes:
         n = len(symbols)
         if n % self.syms_per_byte != 0:
             raise Exception("Unexpected length of symbols")
@@ -158,5 +161,5 @@ class SymbolEncoder:
 
             res[i] = byte
 
-        return res
+        return res.tobytes()
 
