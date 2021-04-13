@@ -58,6 +58,10 @@ class SymbolEncoder:
 
     Explanation:
 
+    This example encodes LSB first, however the actual implementation is MSB
+    first.
+    LSB first is a bit simpler, and is therefore used in this explanation.
+
     The encoder encodes using vectorized operations.
     This works by extracting bits from each element one bit at the time.
 
@@ -109,9 +113,8 @@ class SymbolEncoder:
         self.nbits = int(math.log2(M))
 
         self.syms_per_byte = int(8 // self.nbits)
-        print(self.syms_per_byte)
 
-    def encode(self, byts: np.ndarray) -> np.ndarray:
+    def encode_msb(self, byts: np.ndarray) -> np.ndarray:
         dest = np.empty([self.syms_per_byte, len(byts)])
 
         for i in range(self.syms_per_byte):
@@ -124,3 +127,10 @@ class SymbolEncoder:
         # Now we extract the symbols
         symbols = dest.transpose().flatten()
         return symbols
+
+    def encode(self, byts: np.ndarray, use_msb_first: bool = True) -> np.ndarray:
+        if use_msb_first:
+            return self.encode_msb(byts)
+        else:
+            raise Exception("LSB encoding not supported yet")
+
