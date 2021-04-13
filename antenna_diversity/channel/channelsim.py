@@ -1,10 +1,12 @@
 from .noise import AWGN
-import numpy as np
-import math
+from .fading import rayleigh
+
+#This file is for the construced channel models(maybe the name of the file should be changed)
+#The construced channel models (like the RayAWGNchannel function shown below) can be made in this file.
+#Other channel models can be made below.
 
 def rayawgnchannel(x,snr):
-    raysize = len(x) #unsure if this is correct
-    alpha = np.random.rayleigh(size = raysize,scale = 1/math.sqrt(2))
+    alpha = rayleigh(x)
     W = AWGN(x,snr)
     y = alpha*x + W
     return y
