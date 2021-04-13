@@ -129,13 +129,13 @@ class SymbolEncoder:
 
     def encode_msb(self, byts: bytes) -> np.ndarray:
         # Convert to numpy array
-        byts = np.frombuffer(byts, dtype=np.ubyte)
+        byts_np = np.frombuffer(byts, dtype=np.ubyte)
 
         dest = np.empty([self.syms_per_byte, len(byts)], dtype=np.ubyte)
 
         for i in range(self.syms_per_byte):
             # Take the nbits MSB, which forms symbols
-            symbols = mask_msb_first(byts, self.nbits, i)
+            symbols = mask_msb_first(byts_np, self.nbits, i)
 
             # Save it to dest
             dest[i] = symbols
