@@ -26,7 +26,7 @@ def gen_mask(n: int) -> int:
 
 def mask_msb_first(byts: np.ndarray, n: int, index: int) -> np.ndarray:
     """
-    Will return the index'th n bits from byts.
+    Will mask out the index'th n bit from byts.
     Undefined behavior if 8 is not divisible by n
 
     >>> bin(mask_msb_first(0xDE, 2, 3))
@@ -127,8 +127,11 @@ class SymbolEncoder:
 
         self.syms_per_byte = int(8 // self.nbits)
 
-    def encode_msb(self, byts: np.ndarray) -> np.ndarray:
-        dest = np.empty([self.syms_per_byte, len(byts)])
+    def encode_msb(self, byts: bytes) -> np.ndarray:
+        # Convert to numpy array
+        byts = np.frombuffer(byts, dtype=np.ubyte)
+
+        dest = np.empty([self.syms_per_byte, len(byts)], dtype=np.ubyte)
 
         for i in range(self.syms_per_byte):
             # Take the nbits MSB, which forms symbols
@@ -141,8 +144,22 @@ class SymbolEncoder:
         symbols = dest.transpose().flatten()
         return symbols
 
-    def encode(self, byts: np.ndarray, use_msb_first: bool = True) -> np.ndarray:
-        if use_msb_first:
-            return self.encode_msb(byts)
-        else:
-            raise Exception("LSB encoding not supported yet")
+    def decode_msb(self, symbols: np.ndarray) -> bytes:
+        n = len(symbols)
+        if n % self.syms_per_byte != 0:
+            raise Exception("Unexpected length of symbols")
+
+        nr_bytes = int(n / self.syms_per_byte)
+        res = np.empty(nr_bytes, dtype=np.ubyte)
+
+        for i in range(nr_bytes):
+            byte = 0
+            for s in range(self.syms_per_byte):
+                byte = byte << self.nbits
+                index = i * self.syms_per_byte + s
+                byte = (byte | symbols[index])
+
+            res[i] = byte
+
+        return res.tobytes()
+
