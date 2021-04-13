@@ -1,8 +1,9 @@
 import numpy as np
 import math
+import typing as t
 
 # M = 2, 4, 16, 256
-M_allowlist = [2, 4, 16, 256]
+M_allowlist: t.List[int] = [2, 4, 16, 256]
 
 """
 # Explanation of encoder
@@ -51,7 +52,7 @@ This concatination is done with `dest.transpose().flatten()`.
 """
 
 
-def gen_mask(n):
+def gen_mask(n: int) -> int:
     """
     >>> bin(gen_mask(3))
     '0b111'
@@ -63,7 +64,7 @@ def gen_mask(n):
     return (1 << n) - 1
 
 
-def mask_msb_first(byts, n, index):
+def mask_msb_first(byts: np.ndarray, n: int, index: int) -> np.ndarray:
     """
     Will mask out the index'th n bit from byts.
     Undefined behavior if 8 is not divisible by n
@@ -93,7 +94,7 @@ def mask_msb_first(byts, n, index):
 
 
 class SymbolEncoder:
-    def __init__(self, M):
+    def __init__(self, M: int) -> None:
 
         if M not in M_allowlist:
             raise Exception(f"SymbolEncoder created with unsupported M={M}")
@@ -103,7 +104,7 @@ class SymbolEncoder:
         self.syms_per_byte = int(8 // self.nbits)
         print(self.syms_per_byte)
 
-    def encode(self, byts):
+    def encode(self, byts: np.ndarray) -> np.ndarray:
         dest = np.zeros([self.syms_per_byte, len(byts)])
 
         for i in range(self.syms_per_byte):
