@@ -37,7 +37,14 @@ def mask_msb_first(byts: np.ndarray, n: int, index: int) -> np.ndarray:
     '0b1'
     >>> bin(mask_msb_first(0xDE, 4, 0))
     '0b1101'
+    >>> mask_msb_first(0xDE, 3, 0)
+    Traceback (most recent call last):
+    Exception: not a valid n=3 for mask_msb_first
     """
+    # Check if n is valid
+    if not (8 % n == 0 and n <= 8):
+        raise Exception(f"not a valid n={n} for mask_msb_first")
+
     max_index = int(8 // n)-1
 
     # Create a mask for index 0
