@@ -1,4 +1,5 @@
 from .gray import GrayEncoder
+from .symbolencoder import SymbolEncoder
 import numpy.typing as npt
 
 
