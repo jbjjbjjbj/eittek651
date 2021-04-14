@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import doctest
 import pkgutil
 import unittest
