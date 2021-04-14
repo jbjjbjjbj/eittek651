@@ -40,7 +40,7 @@ class ConstellationModulator:
         # compare elements in a row as opposed to in a column.
         distances = np.abs(np.subtract.outer(received, self.constellation))
         estimated_symbols = np.argmin(distances, 1)
-        return self.encoder.decode(estimated_symbols)
+        return self.encoder.decode(estimated_symbols).astype(int)
 
     def generate_constellation(self, energy: float) -> np.ndarray:
         # Just create a dummy constellation
