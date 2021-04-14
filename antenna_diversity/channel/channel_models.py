@@ -1,7 +1,7 @@
 from .noise import AWGN
 from .fading import rayleigh
 
-#This file is for the construced channel models(maybe the name of the file should be changed)
+#This file is for the construced channel models
 #The construced channel models (like the RayAWGNchannel function shown below) can be made in this file.
 #Other channel models can be made below.
 

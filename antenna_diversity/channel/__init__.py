@@ -1,3 +1,3 @@
 from .noise import AWGN
-from .channelsim import rayawgnchannel
+from .channel_models import rayawgnchannel
 from .fading import rayleigh
