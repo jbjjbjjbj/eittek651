@@ -5,6 +5,5 @@ import math
 #Other fading function can be added later if needed
 
 def rayleigh(sizeofinput):
-    raysize = len(sizeofinput) #unsure if this is correct
-    alpha = np.random.rayleigh(size = raysize,scale = 1/math.sqrt(2))
+    alpha = np.random.rayleigh(size = sizeofinput,scale = 1/math.sqrt(2))
     return alpha

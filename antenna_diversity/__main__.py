@@ -11,7 +11,7 @@ if __name__ == "__main__":
 
     my_modulated = my_pam.modulate(my_symbols)
     print("modulated", my_modulated)
-    my_modulated = channel.rayawgnchannel(my_modulated,22) #med rayleigh er det mindste vi kan komme ned på 22 snr
+    my_modulated = channel.rayleigh_awgn(my_modulated,22) #med rayleigh er det mindste vi kan komme ned på 22 snr
 
     my_demodulated = my_pam.demodulate(my_modulated)
     print(my_demodulated)
