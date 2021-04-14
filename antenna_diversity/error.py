@@ -1,4 +1,5 @@
 import numpy as np
+import typing as t
 
 
 def count_bits(byte: int) -> int:
@@ -33,7 +34,7 @@ class BitErrorMeasure:
         for i in range(256):
             self.bit_count_lookup[i] = count_bits(i)
 
-    def check_against(self, other_raw: bytes) -> np.ndarray:
+    def check_against(self, other_raw: bytes) -> t.Tuple[float, int, int]:
         other = np.frombuffer(other_raw, dtype=np.ubyte)
 
         n = len(other)
@@ -48,6 +49,15 @@ class BitErrorMeasure:
 
         return wrong_bits / total_bits, wrong_bits, total_bits
 
-    def check_nice(self, other_raw: bytes) -> str:
-        frac, wrong, total = self.check_against(other_raw)
-        return f"({wrong}/{total} wrong, or={frac})"
+
+class SymErrorMeasure:
+    def __init__(self, original: np.ndarray, copy=False) -> None:
+        self.original = original
+        if copy:
+            self.original = np.copy(self.original)
+
+    def check_against(self, other: np.ndarray) -> t.Tuple[float, int, int]:
+        total = len(other)
+        wrong = np.sum(self.original != other)
+
+        return wrong / total, wrong, total
