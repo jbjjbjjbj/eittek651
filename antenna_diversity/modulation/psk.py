@@ -1,4 +1,5 @@
 from .constellmod import ConstellationModulator
+from .. import common
 import typing as t
 import math
 import numpy as np
@@ -32,3 +33,18 @@ def generate_psk_constellation(M: int) -> t.List[complex]:
 class PSK(ConstellationModulator):
     def generate_constellation(self, energy: float) -> np.ndarray:
         return np.array(generate_psk_constellation(self.M)) * math.sqrt(energy)
+
+    @staticmethod
+    def theo_symprob(M: int, snr: np.ndarray) -> np.ndarray:
+        if M != 4:
+            raise Exception(f"theo_symprob not implemented for M={M}")
+
+        sqrtsnr = np.sqrt(snr)
+        return 2 * common.q_function(sqrtsnr) - common.q_function(sqrtsnr)**2
+
+    @staticmethod
+    def theo_bitprob(M: int, snr: np.ndarray) -> np.ndarray:
+        if M != 4:
+            raise Exception(f"theo_bitprob not implemented for M={M}")
+
+        return common.q_function(np.sqrt(snr * 2))
