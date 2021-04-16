@@ -7,6 +7,7 @@ import math
 import typing as t
 import copy
 import argparse
+import time
 
 
 class Simulation:
@@ -65,8 +66,16 @@ def run_simulation_til_faults(sim: Simulation, target_faults: int, chunk: int)\
     sym_stats = np.zeros(2)
     bit_stats = np.zeros(2)
     while sym_stats[0] < target_faults:
+
+        start_time = time.time()
+
         s = sim.with_input_random(chunk)
         s.run()
+
+        dur = time.time() - start_time
+        # Increase chunk if calculation was fast
+        if dur < 0.5:
+            chunk = chunk*2
 
         # Only save the counts, and not prob
         sym_stats += np.array(s.measure_symerror()[1:3])
@@ -86,6 +95,7 @@ def run_for_snrs(sim: Simulation,
     sym_probs = np.empty(N)
     for i, snr in enumerate(snrs):
         with_snr = sim.with_channel(snr)
+
         res = run_simulation_til_faults(with_snr, target_faults, chunk)
 
         sym_probs[i], bit_probs[i] = res
