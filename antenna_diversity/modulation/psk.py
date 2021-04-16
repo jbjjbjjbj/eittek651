@@ -39,8 +39,8 @@ class PSK(ConstellationModulator):
         if M != 4:
             raise Exception(f"theoretical_symprob only implemented for M=4, not M={M}")
 
-        sqrtsnr = np.sqrt(snr)
-        return 2 * common.q_function(sqrtsnr) - common.q_function(sqrtsnr)**2
+        sqrt_snr = np.sqrt(snr)
+        return 2 * common.q_function(sqrt_snr) - common.q_function(sqrt_snr)**2
 
     def theoretical_bitprob(self, snr: np.ndarray) -> np.ndarray:
         M = self.M

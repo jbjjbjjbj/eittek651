@@ -54,7 +54,7 @@ def count_bit_errors(a: bytes, b: bytes) -> t.Tuple[int, int]:
 
 
 def count_symbol_errors(a: np.ndarray, b: np.ndarray) \
-        -> t.Tuple[float, int, int]:
+        -> t.Tuple[int, int]:
 
     n = enforce_array_lengths(a, b)
 
