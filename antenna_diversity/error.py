@@ -29,13 +29,20 @@ for i in range(256):
     bit_count_lookup[i] = count_bits(i)
 
 
+def enforce_array_lengths(a: np.ndarray, b: np.ndarray) -> int:
+    na = len(a)
+    nb = len(b)
+    if na != nb:
+        raise Exception(f"array sized differ: {na} != {nb}")
+
+    return na
+
+
 def count_bit_errors(a: bytes, b: bytes) -> t.Tuple[int, int]:
     a_np = np.frombuffer(a, dtype=np.ubyte)
     b_np = np.frombuffer(b, dtype=np.ubyte)
 
-    n = len(a_np)
-    if n != len(b_np):
-        raise Exception("array to be checked is not the original size")
+    n = enforce_array_lengths(a_np, b_np)
 
     total_bits = n * 8
 
@@ -49,9 +56,8 @@ def count_bit_errors(a: bytes, b: bytes) -> t.Tuple[int, int]:
 def count_symbol_errors(a: np.ndarray, b: np.ndarray) \
         -> t.Tuple[float, int, int]:
 
-    if len(a) != len(b):
-        raise Exception("array to be checked is not the original size")
+    n = enforce_array_lengths(a, b)
 
     wrong = np.sum(a != b)
 
-    return wrong, len(a)
+    return wrong, n

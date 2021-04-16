@@ -16,6 +16,12 @@ class TestBitErrorMeasure(unittest.TestCase):
         self.assertEqual(faults, 9)
         self.assertEqual(total, 100 * 8)
 
+    def test_exception(self):
+        d1 = b'adbe'
+        d2 = b'adbeed'
+        with self.assertRaisesRegex(Exception, "array sized differ: 4 != 6"):
+            error.count_bit_errors(d1, d2)
+
 
 class TestSymErrorMeasure(unittest.TestCase):
     def test(self):
