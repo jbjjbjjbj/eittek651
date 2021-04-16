@@ -47,9 +47,9 @@ class ModulationTest:
             data = os.urandom(chunk)
             self.feed_data(data, snr)
 
-            dur = time.time() - start_time
+            duration = time.time() - start_time
             # Increase chunk if calculation was fast
-            if dur < 0.5:
+            if duration < 0.5:
                 chunk = chunk*2
 
             print(f"\racc_sym[faults, total]:{self.sym_stats} ", end="")
@@ -66,7 +66,10 @@ class ModulationTest:
         bit_probs = np.empty(N)
         sym_probs = np.empty(N)
         for i, snr in enumerate(snrs):
-            test.run_until_faults(target, snr)
+            try:
+                test.run_until_faults(target, snr)
+            except KeyboardInterrupt:
+                print(f"\nInterrupted simulation of snr={snr}")
 
             sym_probs[i], bit_probs[i] = test.get_probabilities()
             test.reset_counts()
