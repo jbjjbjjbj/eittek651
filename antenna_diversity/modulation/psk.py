@@ -34,17 +34,17 @@ class PSK(ConstellationModulator):
     def generate_constellation(self, energy: float) -> np.ndarray:
         return np.array(generate_psk_constellation(self.M)) * math.sqrt(energy)
 
-    def theo_symprob(self, snr: np.ndarray) -> np.ndarray:
+    def theoretical_symprob(self, snr: np.ndarray) -> np.ndarray:
         M = self.M
         if M != 4:
-            raise Exception(f"theo_symprob not implemented for M={M}")
+            raise Exception(f"theoretical_symprob only implemented for M=4, not M={M}")
 
         sqrtsnr = np.sqrt(snr)
         return 2 * common.q_function(sqrtsnr) - common.q_function(sqrtsnr)**2
 
-    def theo_bitprob(self, snr: np.ndarray) -> np.ndarray:
+    def theoretical_bitprob(self, snr: np.ndarray) -> np.ndarray:
         M = self.M
         if M != 4:
-            raise Exception(f"theo_bitprob not implemented for M={M}")
+            raise Exception(f"theoretical_bitprob only implemented for M=4, not M={M}")
 
         return common.q_function(np.sqrt(snr * 2))
