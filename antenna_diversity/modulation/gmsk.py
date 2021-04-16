@@ -1,21 +1,7 @@
 import numpy as np
 import typing as t
-import matplotlib.pyplot as plt
-import matplotlib
-import math
 from scipy import signal
 from scipy.signal import upfirdn, lfilter
-
-
-# Fb = 1.152e6  # bit frequence (bit rate) of 1.152Mbps
-# Tb = 1/Fb  # bit time 1/Fb
-# print("real", Tb)
-# BTb = 0.5  # bandwith bit period product of BTb = 0.5
-# deltaf = 288e3*2  # Nominal peak peak frequency deviation of 288 kHz
-# h = deltaf*Tb
-# print("h", h)
-# fc = 1.8e9  # carrier frequency
-# L = 32  # oversampling factor must satisfy nyquist sampling theorem
 
 
 class SymErrorMeasure:
@@ -108,86 +94,3 @@ class GMSK():
         z = z1 - z2
         a_hat = (z[2*self.L-1:-self.L:self.L] < 0).astype(int)
         return a_hat
-
-
-# def modulate_gmsk_signal(bit_sequence):
-#     fs = L*Fb
-#     Ts = 1/fs
-#     #Tb = L*Ts
-#     # Ts = Tb*L  # set sample time to L times bit time Tb
-#     # convert to from bit sequence 1 and 0 to NRZ sequence -1 and 1
-#     c_t = upfirdn(h=[1]*L, x=2*bit_sequence-1, up=L)
-#     # plt.plot(c_t)
-#     k = 1  # truncation lenght for Gaussian LPF
-#     h_t = gaussianLPF(BTb, Tb, L, k)  # get gaussian Low Pass filter
-#     # convolve the -1,1 sequence with the gaussian filter to get the waveform of the phase
-#     b_t = np.convolve(h_t, c_t, 'full')
-
-#     # normalise such that the output is limited between -1 and 1
-#     bnorm_t = b_t/max(abs(b_t))
-#     # plt.plot(bnorm_t)
-
-#     # integrate over the output of the gaussian filter to get phase information
-#     phi_t = lfilter(b=[1], a=[1, -1], x=bnorm_t*Ts)*h*np.pi/Tb
-#     I = np.cos(phi_t)  # calculate the inphase
-#     Q = np.sin(phi_t)  # calculate the quadrature
-#     return I, Q
-
-
-# def demodulate_gmsk_signal(baseband_signal_I, baseband_signal_Q):
-#     z1 = baseband_signal_I * \
-#         np.hstack((np.zeros(L), baseband_signal_Q[0:len(baseband_signal_Q)-L]))
-#     z2 = baseband_signal_Q * \
-#         np.hstack((np.zeros(L), baseband_signal_I[0:len(baseband_signal_I)-L]))
-#     z = z1 - z2
-#     a_hat = (z[2*L-1:-L:L] < 0).astype(int)
-#     return a_hat
-
-
-# def gmsk_awgn(baseband_signal_I, baseband_signal_Q, snr):
-#     noise = AWGN(len(baseband_signal_Q), snr)
-#     w_real = np.real(noise)
-#     w_imag = np.imag(noise)
-#     I = baseband_signal_I+w_real
-#     Q = baseband_signal_Q+w_imag
-#     return I, Q
-
-
-# test = np.array([0.0, 1.0, 2, 3, 2, 1, 0, -1, -2, -
-#                  3, 2, 1, 3, 2, -4, -5, 6, -4, -5])
-# lfilter_res = lfilter(b=[1], a=[1, -1], x=test)
-# print('lfilter:', lfilter_res)
-# integrated = integrator(test)
-# print('integrator', integrated)
-# plt.plot(test)
-# plt.plot(integrated, '.')
-# plt.plot(lfilter_res, '-.')
-
-# bit_error_prob = []
-
-# test_bits = np.array([1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0])
-# I, Q = modulate_gmsk_signal(test_bits)
-# I, Q = gmsk_awgn(I, Q, 0.0001)
-
-# hat_test_bits = demodulate_gmsk_signal(I, Q)
-
-# plt.plot(test_bits)
-# plt.plot(hat_test_bits)
-# plt.plot(I)
-# plt.plot(Q)
-# ax.plot(I_Q
-
-
-# def gaussianLPF(BTb, Tb, L, k):  # craete gaussian low pass filter
-#     B = BTb/Tb  # bandwidth of the filter
-#     print(B, L)
-#     print("Tb", Tb)
-#     t = np.arange(start=-k*Tb, stop=k*Tb + Tb/L, step=Tb/L)
-#     h = B*np.sqrt(2*np.pi/(np.log(2))) * \
-#         np.exp(-2 * (t*np.pi*B)**2 / (np.log(2)))
-#     h_norm = h/np.sum(h)
-#     # bit_sequence = np
-#     # delta = np.array([1])
-#     # test = np.convolve(delta, h_norm)
-#     # plt.plot(test)
-#     return h_norm
