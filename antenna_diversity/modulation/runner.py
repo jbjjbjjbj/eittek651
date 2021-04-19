@@ -92,7 +92,7 @@ class Runner:
         return sym_probs, bit_probs
 
     @staticmethod
-    def plot(modulator, snrs_db: np.ndarray, target: int, fig_out="out.png"):
+    def plot(modulator, snrs_db: np.ndarray, target: int):
         # Setup vars
         M = modulator.M
 
@@ -122,7 +122,7 @@ class Runner:
         df_sym.plot(ax=ax[1], logy=True, xlabel="Symbol SNR [dB]",
                     ylabel="Symbol Error Rate")
         fig.tight_layout()
-        fig.savefig(fig_out)
+        return fig
 
     @staticmethod
     def count_bit_errors(a: bytes, b: bytes) -> t.Tuple[int, int]:
