@@ -1,7 +1,8 @@
 import struct
 import math
-import crccheck.crc as crc
+import crccheck as cr
 import typing as t
+from bitarray import bitarray
 
 
 # R-CRC
@@ -51,7 +52,7 @@ class Full():
         self.a_header = int('1'*8, 2)
         self.a_tail = bytes.fromhex('AA' * int(40/8))
         self.crc_fields = struct.pack('B5s', self.a_header, self.a_tail)
-        self.a_crc = crc.Crc16DectR().calc(self.crc_fields)
+        self.a_crc = cr.crc.Crc16DectR().calc(self.crc_fields)
 
         self.packet_format = '=HL8s40sB'
         self.preamble = int('10' * 8, 2)
@@ -59,18 +60,19 @@ class Full():
         if len(payload) != int(320/8):
             raise Exception(f"payload is not {int(320/8)} long")
         self.b_field = bytes(payload)
+        
+        
+        self.test_bytes = prepare_test_bytes(self.b_field)
 
-        # bytes be CRCed
-        self.test_bytes = bytearray()
-        for e in test_byte_indices(M):
-            self.test_bytes.append(self.b_field[e])
 
-        x_field = (crc.Crc16DectX.calc(self.test_bytes) >> 12) | 0x000f  # Not sure if correct
-        if x_field.bit_length() != 4:
+        x_field = crc(self.test_bytes)  # Not sure if correct
+        print(x_field.bit_length())
+        if x_field.bit_length() > 4:
             raise Exception("x_field bit length is not 4")
 
         self.xz_field = x_field | (x_field << 4)
-
+    
+    
     def to_bytes(self) -> bytes:
         a_field = struct.pack(self.a_field_format,
                               self.a_header,
@@ -86,7 +88,42 @@ class Full():
                            )
 
 
+def crc(data: bytes):
 
+    a = bitarray()
+    a.frombytes(data)
+    a.extend([0,0,0,0])
+    poly = 1
+    register = 0
+    
+    while(len(a)>0):
+        desicion = register & 8
+        register = (register << 1) & 0xF
+        register |= a.pop(0)
+        
+        if(desicion > 0):
+            register = register ^ poly
+            
+    return register
+
+
+def prepare_test_bytes(b_field: bytes) -> bytearray:
+    """
+    >>> prepare_test_bytes(bytes.fromhex('0b 0b 0c 0d 0e 0f aa bb cc'))
+    bytearray(b'\\x0b\\x0b\\xcc')
+    """
+    # bytes be CRCed
+    test_bytes = bytearray()
+    i = 1
+    for e in b_field:
+        i = i%8
+        
+        if i == 1 or i == 2:
+            test_bytes.append(e)
+        i+=1
+    return bytes(test_bytes)
+
+"""
 def test_byte_indices(M: int) -> t.List:
     # etsi dect standard p. 87
     o = int(math.log2(M)) - 1
@@ -105,4 +142,4 @@ def test_byte_indices(M: int) -> t.List:
     # Assumes there is always 8 bits in a row
     byte_indices = [int(bit_indices[i]/8) for i in range(0, len(bit_indices), 8)]
     return byte_indices
-
+"""

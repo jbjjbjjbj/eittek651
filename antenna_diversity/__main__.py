@@ -3,9 +3,11 @@ from . import common
 from . import modulation
 
 if __name__ == "__main__":
+    
+    pass
 
 
-
+"""
     my_pam = modulation.PAM(4)
 
     #          | pS | S | A |    B | X| Z|
@@ -22,3 +24,4 @@ if __name__ == "__main__":
 
     my_demodulated = my_pam.demodulate(my_modulated)
     print(my_demodulated)
+"""
