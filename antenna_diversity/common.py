@@ -37,6 +37,9 @@ def shared_length(a, *args) -> int:
     2
     >>> shared_length((1, 1), (2, 2))
     2
+    >>> shared_length((1, 2), (1, 2, 3))
+    Traceback (most recent call last):
+    Exception: lengths of (1, 2) and (1, 2, 3) differ: 2 != 3
     """
     na = len(a)
     for arg in args:
