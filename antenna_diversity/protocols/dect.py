@@ -86,6 +86,22 @@ class Full():
                            self.b_field,
                            self.xz_field,
                            )
+    
+    def from_bytes(self, bytes):
+        self.preamble, self.sync, a_field, self.b_field, self.xz_field = \
+            struct.unpack(self.packet_format, bytes)
+        self.a_header, self.a_tail, self.a_crc = \
+            struct.unpack(self.a_field_format, a_field)
+    
+    def check_crc(self) -> bool:
+        self.test_bytes = prepare_test_bytes(self.b_field)
+
+        x_field = crc(self.test_bytes)  # Not sure if correct
+        
+        xz_field = x_field | (x_field << 4)
+        
+        return xz_field == self.xz_field
+        
 
 
 def crc(data: bytes):
