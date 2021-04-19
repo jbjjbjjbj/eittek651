@@ -37,7 +37,7 @@ This can be done from a python shell:
 
 ```python
 import antenna_diversity.modulation as mod
-mod.Runner.plot(mod.PAM(4), (-10, 20), 10)
+mod.Runner.plot(mod.PAM(4), np.arange(-10, 20+1), 10)
 ```
 
 ## Misc

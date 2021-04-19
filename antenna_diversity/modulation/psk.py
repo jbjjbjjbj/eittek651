@@ -13,7 +13,7 @@ def generate_psk_constellation(M: int) -> t.List[complex]:
     >>> [np.round(x) for x in generate_psk_constellation(4)]
     [(1+0j), 1j, (-1+0j), (-0-1j)]
     """
-    # Cite Fleury and Land p. 89 
+    # Cite Fleury and Land p. 89
     precalc = 2 * math.pi / M
     def phi_m_g(m): return (m-1) * precalc
 
@@ -35,16 +35,28 @@ class PSK(ConstellationModulator):
         return np.array(generate_psk_constellation(self.M)) * math.sqrt(energy)
 
     def theoretical_symprob(self, snr: np.ndarray) -> np.ndarray:
+        """
+        Calculates the theoretical symbol probability with symbol SNR's.
+
+        Cite: Fleury and Land, page 95
+        """
         M = self.M
         if M != 4:
-            raise Exception(f"theoretical_symprob only implemented for M=4, not M={M}")
+            raise Exception(f"theoretical_symprob only implemented \
+                    for M=4, not M={M}")
 
         sqrt_snr = np.sqrt(snr)
         return 2 * common.q_function(sqrt_snr) - common.q_function(sqrt_snr)**2
 
     def theoretical_bitprob(self, snr: np.ndarray) -> np.ndarray:
+        """
+        Calculates the theoretical bit probabilities with bit SNR's
+
+        Cite: Fleury and Land, page 98
+        """
         M = self.M
         if M != 4:
-            raise Exception(f"theoretical_bitprob only implemented for M=4, not M={M}")
+            raise Exception(f"theoretical_bitprob only implemented \
+                    for M=4, not M={M}")
 
         return common.q_function(np.sqrt(snr * 2))

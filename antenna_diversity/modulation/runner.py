@@ -9,8 +9,21 @@ import time
 import pandas as pd
 
 
+bit_count_lookup = np.empty(256, dtype=int)
+for i in range(256):
+    bit_count_lookup[i] = common.count_bits(i)
+
+
 class Runner:
-    def __init__(self, modulator, snrs: np.ndarray):
+    """
+    Runs the selected instantiated modulator for different snr's.
+
+    Tests are run until a satisfactory number of errors are found.
+    Main functionality should happen through the static `plot` and
+    `simulate_snrs` methods.
+    """
+
+    def __init__(self, modulator):
         self.modulator = modulator
         self.M = modulator.M
 
@@ -40,17 +53,17 @@ class Runner:
                 )
 
     def run_until_faults(self, target: int, snr: float) -> None:
-        chunk = 10000
+        chunk_size = 10000
         while self.sym_stats[0] < target:
             start_time = time.time()
 
-            data = os.urandom(chunk)
+            data = os.urandom(chunk_size)
             self.feed_data(data, snr)
 
             duration = time.time() - start_time
-            # Increase chunk if calculation was fast
+            # Increase chunk_size if calculation was fast
             if duration < 0.5:
-                chunk = chunk*2
+                chunk_size = chunk_size*2
 
             print(f"\racc_sym[faults, total]:{self.sym_stats} ", end="")
 
@@ -60,7 +73,7 @@ class Runner:
 
     @staticmethod
     def simulate_snrs(modulator, snrs: np.ndarray, target: int):
-        runner = Runner(modulator, snrs)
+        runner = Runner(modulator)
 
         N = len(snrs)
         bit_probs = np.empty(N)
@@ -73,18 +86,17 @@ class Runner:
 
             sym_probs[i], bit_probs[i] = runner.get_probabilities()
             runner.reset_counts()
-            print(f"snr={snr}, sym_prob={sym_probs[i]}, bit_probs={bit_probs[i]}")
+            print(f"snr={snr}, sym_prob={sym_probs[i]}, \
+                    bit_probs={bit_probs[i]}")
 
         return sym_probs, bit_probs
 
     @staticmethod
-    def plot(modulator, snr_range: t.Tuple[int, int], target: int):
+    def plot(modulator, snrs_db: np.ndarray, target: int, fig_out="out.png"):
         # Setup vars
         M = modulator.M
 
         # Setup X axises
-        snrs_db = np.arange(snr_range[0], snr_range[1]+1)
-        # We devide by four to get the SNR per bit, instead of per sumbol
         snrs_symbol = common.db_to_power(snrs_db)
         snrs_bit = snrs_symbol / math.log2(M)
 
@@ -105,10 +117,12 @@ class Runner:
                 data={"Theoretical": theo_sym, "Simulated": sim_sym}
                 )
         fig, ax = plt.subplots(2)
-        df_bit.plot(ax=ax[0], logy=True, xlabel="Symbol SNR [dB]", ylabel="Bit Error Rate")
-        df_sym.plot(ax=ax[1], logy=True, xlabel="Symbol SNR [dB]", ylabel="Symbol Error Rate")
+        df_bit.plot(ax=ax[0], logy=True, xlabel="Symbol SNR [dB]",
+                    ylabel="Bit Error Rate")
+        df_sym.plot(ax=ax[1], logy=True, xlabel="Symbol SNR [dB]",
+                    ylabel="Symbol Error Rate")
         fig.tight_layout()
-        fig.savefig("out.png")
+        fig.savefig(fig_out)
 
     @staticmethod
     def count_bit_errors(a: bytes, b: bytes) -> t.Tuple[int, int]:
@@ -135,7 +149,3 @@ class Runner:
 
         return wrong, n
 
-
-bit_count_lookup = np.empty(256, dtype=int)
-for _ in range(256):
-    bit_count_lookup[i] = common.count_bits(i)
