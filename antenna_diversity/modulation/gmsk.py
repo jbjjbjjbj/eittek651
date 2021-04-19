@@ -4,19 +4,6 @@ from scipy import signal
 from scipy.signal import upfirdn, lfilter
 
 
-class SymErrorMeasure:
-    def __init__(self, original: np.ndarray, copy=False) -> None:
-        self.original = original
-        if copy:
-            self.original = np.copy(self.original)
-
-    def check_against(self, other: np.ndarray) -> t.Tuple[float, int, int]:
-        total = len(other)
-        wrong = np.sum(self.original != other)
-
-        return wrong / total, wrong, total
-
-
 class GMSK():
     def __init__(self, bitrate=1.152e6, BTb=0.5, deltaf=288e3*2, fc=1.88e9, L=32) -> None:
         # setup parameters for gmsk
