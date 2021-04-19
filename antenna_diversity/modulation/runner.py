@@ -1,4 +1,4 @@
-from antenna_diversity import encoding, error, common, channel
+from antenna_diversity import encoding, common, channel
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -9,7 +9,8 @@ import time
 import pandas as pd
 
 
-class ModulationTest:
+
+class Runner:
     def __init__(self, modulator, snrs: np.ndarray):
         self.modulator = modulator
         self.M = modulator.M
@@ -17,6 +18,7 @@ class ModulationTest:
         self.symbolenc = encoding.SymbolEncoder(self.M)
 
         self.reset_counts()
+
 
     def reset_counts(self):
         # [faults, total]
@@ -33,10 +35,10 @@ class ModulationTest:
         data_hat = self.symbolenc.decode_msb(symbols_hat)
 
         self.bit_stats += np.array(
-                error.count_symbol_errors(symbols, symbols_hat)
+                self.count_symbol_errors(symbols, symbols_hat)
                 )
         self.sym_stats += np.array(
-                error.count_bit_errors(data, data_hat)
+                self.count_bit_errors(data, data_hat)
                 )
 
     def run_until_faults(self, target: int, snr: float) -> None:
@@ -60,19 +62,19 @@ class ModulationTest:
 
     @staticmethod
     def simulate_snrs(modulator, snrs: np.ndarray, target: int):
-        test = ModulationTest(modulator, snrs)
+        runner = Runner(modulator, snrs)
 
         N = len(snrs)
         bit_probs = np.empty(N)
         sym_probs = np.empty(N)
         for i, snr in enumerate(snrs):
             try:
-                test.run_until_faults(target, snr)
+                runner.run_until_faults(target, snr)
             except KeyboardInterrupt:
                 print(f"\nInterrupted simulation of snr={snr}")
 
-            sym_probs[i], bit_probs[i] = test.get_probabilities()
-            test.reset_counts()
+            sym_probs[i], bit_probs[i] = runner.get_probabilities()
+            runner.reset_counts()
             print(f"snr={snr}, sym_prob={sym_probs[i]}, bit_probs={bit_probs[i]}")
 
         return sym_probs, bit_probs
@@ -92,7 +94,7 @@ class ModulationTest:
         theo_bit = modulator.theoretical_bitprob(snrs_bit)
         theo_sym = modulator.theoretical_symprob(snrs_symbol)
 
-        sim_sym, sim_bit = ModulationTest.simulate_snrs(
+        sim_sym, sim_bit = Runner.simulate_snrs(
                 modulator, snrs_db, target)
 
         # Plot probabilities
@@ -109,3 +111,33 @@ class ModulationTest:
         df_sym.plot(ax=ax[1], logy=True, xlabel="Symbol SNR [dB]", ylabel="Symbol Error Rate")
         fig.tight_layout()
         fig.savefig("out.png")
+
+    @staticmethod
+    def count_bit_errors( a: bytes, b: bytes) -> t.Tuple[int, int]:
+        a_np = np.frombuffer(a, dtype=np.ubyte)
+        b_np = np.frombuffer(b, dtype=np.ubyte)
+
+        n = common.shared_length(a_np, b_np)
+
+        total_bits = n * 8
+
+        difference = np.bitwise_xor(a_np, b_np)
+        counts = bit_count_lookup[difference]
+        wrong_bits = np.sum(counts)
+
+        return wrong_bits, total_bits
+
+    @staticmethod
+    def count_symbol_errors(a: np.ndarray, b: np.ndarray) \
+            -> t.Tuple[int, int]:
+
+        n = common.shared_length(a, b)
+
+        wrong = np.sum(a != b)
+
+        return wrong, n
+
+
+bit_count_lookup = np.empty(256, dtype=int)
+for i in range(256):
+    bit_count_lookup[i] = common.count_bits(i)

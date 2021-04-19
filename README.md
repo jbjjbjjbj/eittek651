@@ -31,17 +31,17 @@ $ python3 test.py
 $ mypy antenna_diversity/
 ```
 
+## Compare Simulated Modulation to Theoretical Modulation
+
+This can be done from a python shell:
+
+```python
+import antenna_diversity.modulation as mod
+mod.Runner.plot(mod.PAM(4), (-10, 20), 10)
+```
+
 ## Misc
 
 Remember to write things that should be exposed to the user in the relevant `__init__.py` file.
 Functions are in this sense "more private" than methods of an object which is exposed.
 This extra layer of encapsulation is there since we want to test pure functions with docstrings.
-
-## Running ModulationTest
-
-This is done from a python shell.
-
-```python
-import antenna_diversity.modulation as mod
-mod.ModulationTest.plot(mod.PAM(4), (-10, 20), 10)
-```
