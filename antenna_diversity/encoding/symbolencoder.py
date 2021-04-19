@@ -31,8 +31,8 @@ def mask_msb_first(byts: np.ndarray, n: int, index: int) -> np.ndarray:
 
     >>> bin(mask_msb_first(0xDE, 2, 3))
     '0b10'
-    >>> mask_msb_first(np.array([0xDE, 0xAD]), 2, 0)
-    array([3, 2])
+    >>> list(mask_msb_first(np.array([0xDE, 0xAD]), 2, 0))
+    [3, 2]
     >>> bin(mask_msb_first(0xDE, 2, 1))
     '0b1'
     >>> bin(mask_msb_first(0xDE, 4, 0))

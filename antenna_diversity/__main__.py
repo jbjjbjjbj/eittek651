@@ -1,17 +1,20 @@
 import numpy as np
 from . import modulation
 from . import channel
+from . import encoding, protocols
 
 if __name__ == "__main__":
-    my_pam = modulation.PSK(4)
+    my_pam = modulation.PSK(2)
     my_pam.save_constellation("constellation.png")
 
     #          | pS | S | A |    B | X| Z|
     # np.array([1, 0, 0, 1, 1, 1, 1, 1, 1])
+    
+    payload = b'0123456789012345678901234567890123456789'
 
-    dect_packet = protocols.DECT().full(payload)
+    dect_packet = protocols.DECT(2).create_full(payload)
 
-    my_symbols = encode(dect_packet)
+    my_symbols = encoding.SymbolEncoder(2).encode_msb(dect_packet.to_bytes())
 
     print(my_symbols)
 

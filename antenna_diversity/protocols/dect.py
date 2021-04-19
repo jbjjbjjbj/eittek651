@@ -128,10 +128,10 @@ def crc(data: bytes):
     return register
 
 
-def prepare_test_bytes(b_field: bytes) -> bytearray:
+def prepare_test_bytes(b_field: bytes) -> bytes:
     """
     >>> prepare_test_bytes(bytes.fromhex('0b 0b 0c 0d 0e 0f aa bb cc'))
-    bytearray(b'\\x0b\\x0b\\xcc')
+    b'\\x0b\\x0b\\xcc'
     """
     # bytes be CRCed
     test_bytes = bytearray()
