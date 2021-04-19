@@ -9,7 +9,6 @@ import time
 import pandas as pd
 
 
-
 class Runner:
     def __init__(self, modulator, snrs: np.ndarray):
         self.modulator = modulator
@@ -18,7 +17,6 @@ class Runner:
         self.symbolenc = encoding.SymbolEncoder(self.M)
 
         self.reset_counts()
-
 
     def reset_counts(self):
         # [faults, total]
@@ -113,7 +111,7 @@ class Runner:
         fig.savefig("out.png")
 
     @staticmethod
-    def count_bit_errors( a: bytes, b: bytes) -> t.Tuple[int, int]:
+    def count_bit_errors(a: bytes, b: bytes) -> t.Tuple[int, int]:
         a_np = np.frombuffer(a, dtype=np.ubyte)
         b_np = np.frombuffer(b, dtype=np.ubyte)
 
@@ -139,5 +137,5 @@ class Runner:
 
 
 bit_count_lookup = np.empty(256, dtype=int)
-for i in range(256):
+for _ in range(256):
     bit_count_lookup[i] = common.count_bits(i)

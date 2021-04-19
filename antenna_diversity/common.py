@@ -1,7 +1,6 @@
 """
 Defines som common functions and shorthand functions used across modules.
 """
-import itertools
 import numpy as np
 import scipy.stats
 
@@ -62,7 +61,7 @@ def count_bits(val: int) -> int:
     1
     """
     count = 0
-    for i in range(val.bit_length()):
+    for _ in range(val.bit_length()):
         count += val & 1
         val = val >> 1
 
