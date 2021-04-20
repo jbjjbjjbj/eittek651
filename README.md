@@ -31,6 +31,16 @@ $ python3 test.py
 $ mypy antenna_diversity/
 ```
 
+## Compare Simulated Modulation to Theoretical Modulation
+
+This can be done from a python shell:
+
+```python
+import antenna_diversity.modulation as mod
+import numpy as np
+mod.Runner.plot(mod.PAM(4), np.array([-5, -10]), 10).savefig("out.png")
+```
+
 ## Misc
 
 Remember to write things that should be exposed to the user in the relevant `__init__.py` file.
