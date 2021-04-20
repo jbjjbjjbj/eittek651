@@ -3,7 +3,10 @@
 # SPDX-License-Identifier: Beerware OR MIT
 import struct
 from crccheck import crc
+import numpy as np
 from bitarray import bitarray
+
+from numba import jit
 
 
 # R-CRC
@@ -108,7 +111,31 @@ class Full():
         return self.calculate_xz_field() == self.xz_field
 
 
-def dect_4bit_crc(data: bytes):
+def gen_lookup_at(i: int):
+    for _ in range(4):
+        i = i << 1
+        # Check if we need to XOR with poly
+        if i & 0x100:
+            i = i ^ 0x10
+
+    return i & 0xFF
+
+
+table = np.empty(0xFF + 1, dtype=np.ubyte)
+for i in range(0xFF):
+    table[i] = gen_lookup_at(i)
+
+
+@jit(nopython=True)
+def dect_4bit_crc(data: bytes) -> int:
+    crc = 0
+    for byte in data:
+        crc = table[crc ^ byte]
+
+    return crc >> 4
+
+
+def dect_4bit_crc_old(data: bytes) -> int:
     a = bitarray()
     a.frombytes(data)
     a.extend([0, 0, 0, 0])
