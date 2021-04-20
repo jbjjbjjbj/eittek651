@@ -1,9 +1,11 @@
+from antenna_diversity.diversity_schemes.combining import MRC
 import numpy as np
 from . import modulation
 from . import channel
+from . import diversity_schemes
 
 if __name__ == "__main__":
-    my_pam = modulation.PSK(4)
+    my_pam = modulation.PSK(2)
     my_pam.save_constellation("constellation.png")
 
     my_symbols = np.random.randint(0, 4, size=100)
@@ -11,7 +13,8 @@ if __name__ == "__main__":
 
     my_modulated = my_pam.modulate(my_symbols)
     print("modulated", my_modulated)
-    my_modulated = channel.rayleigh_awgn(my_modulated,22) #med rayleigh er det mindste vi kan komme ned på 22 snr
+    my_modulated = diversity_schemes.MRC(my_modulated,21,2) 
+    #my_modulated = channel.rayleigh_awgn(my_modulated,22) #med rayleigh er det mindste vi kan komme ned på 22 snr
 
     my_demodulated = my_pam.demodulate(my_modulated)
     print(my_demodulated)
