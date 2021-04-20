@@ -31,6 +31,26 @@ $ python3 test.py
 $ mypy antenna_diversity/
 ```
 
+## Compare Simulated Modulation to Theoretical Modulation
+
+This can be done from a python shell:
+
+```python
+import antenna_diversity.modulation as mod
+import numpy as np
+mod.Runner.plot(mod.PAM(4), np.array([-5, -10]), 10).savefig("out.png")
+```
+
+## Profile an Example
+
+You can do this any which way you like, but here is with cProfile and snakeviz:
+
+```
+$ python -m cProfile -o hello.prof examples/hello_world.py
+$ snakeviz hello.prof
+```
+
+
 ## Misc
 
 Remember to write things that should be exposed to the user in the relevant `__init__.py` file.

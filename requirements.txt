@@ -9,3 +9,4 @@ pylint
 flake8
 crccheck
 bitarray
+snakeviz

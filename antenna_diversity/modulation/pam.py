@@ -6,6 +6,8 @@ import numpy as np
 import typing as t
 import math
 
+from .. import common
+
 from .constellmod import ConstellationModulator
 
 
@@ -28,3 +30,23 @@ class PAM(ConstellationModulator):
     def generate_constellation(self, energy: float) -> np.ndarray:
         d = math.sqrt(3 * energy / (self.M**2 - 1))
         return np.array(generate_lookup(self.M)) * d
+
+    def theoretical_bitprob(self, snr: np.ndarray) -> np.ndarray:
+        """
+        Calculates the theoretical bit probabilities with bit SNR's
+
+        Cite: Fleury and Land, page 66
+        """
+        M = self.M
+        log2M = np.log2(M)
+        return 2 * (M - 1) / (M * log2M) * \
+            common.q_function(np.sqrt(snr * (6 * log2M) / (M*M - 1)))
+
+    def theoretical_symprob(self, snr: np.ndarray) -> np.ndarray:
+        """
+        Calculates the theoretical symbol probability with symbol SNR's.
+
+        Cite: Fleury and Land, page 65
+        """
+        M = self.M
+        return 2 * (1 - 1/M) * common.q_function(np.sqrt(snr * 6 / (M*M - 1)))
