@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# Copyright 2021 Christian Schneider Pedersen <cspe18@student.aau.dk>, Helene Bach Vistisen, Julian Teule, Mikkel Filt Bengtson, Victor Büttner <beer@0x23.dk>
+#
+# SPDX-License-Identifier: Beerware OR MIT
+
 """
 This runs the different parts of antenna_diversity to make profiling easy
 """
