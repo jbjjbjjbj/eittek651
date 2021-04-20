@@ -4,4 +4,4 @@ import sys
 from pathlib import Path
 
 filepath = Path(os.path.realpath(__file__))
-sys.path.append(filepath.parent)
+sys.path.append(str(filepath.parent.parent))
