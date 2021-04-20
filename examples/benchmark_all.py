@@ -8,10 +8,9 @@ This runs the different parts of antenna_diversity to make profiling easy
 """
 
 import os
-import time
 
 import ad_path
-from antenna_diversity import modulation, encoding, channel, protocols
+from antenna_diversity import modulation, encoding, channel, protocols, common
 
 ad_path.nop()
 
@@ -41,14 +40,11 @@ def run_sim() -> bool:
 num_packets = 10000
 
 wrong = 0
-start = time.time()
+with common.Timer() as t:
+    for i in range(num_packets):
+        wrong += int(run_sim())
 
-for i in range(num_packets):
-    wrong += int(run_sim())
+        if i % 1000 == 0:
+            print(i)
 
-    if i % 1000 == 0:
-        print(i)
-
-duration = time.time() - start
-
-print(f"runtime: {duration}, total: {num_packets}, wrong: {wrong}")
+print(f"runtime: {t.get_duration()}, total: {num_packets}, wrong: {wrong}")

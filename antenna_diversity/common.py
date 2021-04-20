@@ -7,6 +7,34 @@ Defines som common functions and shorthand functions used across modules.
 import numpy as np
 import scipy.stats
 
+import time
+
+
+class Timer:
+    """
+    Helper to measure runtime of code
+
+    Is used with the `with` statement as follows:
+
+    ```
+    with Timer() as t:
+        time.sleep(3)
+
+    print(t.get_duration())
+    ```
+    """
+
+    def __enter__(self):
+        self.start_time = time.time()
+
+        return self
+
+    def __exit__(self, *args):
+        self.stop_time = time.time()
+
+    def get_duration(self):
+        return self.stop_time - self.start_time
+
 
 def q_function(x):
     """

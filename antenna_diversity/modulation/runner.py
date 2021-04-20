@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 import os
 import math
 import typing as t
-import time
 import pandas as pd
 
 
@@ -58,14 +57,12 @@ class Runner:
     def run_until_faults(self, target: int, snr: float) -> None:
         chunk_size = 10000
         while self.sym_stats[0] < target:
-            start_time = time.time()
+            with common.Timer() as t:
+                data = os.urandom(chunk_size)
+                self.feed_data(data, snr)
 
-            data = os.urandom(chunk_size)
-            self.feed_data(data, snr)
-
-            duration = time.time() - start_time
             # Increase chunk_size if calculation was fast
-            if duration < 0.5:
+            if t.get_duration() < 0.5:
                 chunk_size = chunk_size*2
 
             print(f"\racc_sym[faults, total]:{self.sym_stats} ", end="")
