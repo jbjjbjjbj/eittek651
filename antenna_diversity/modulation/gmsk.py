@@ -33,7 +33,7 @@ class GFSK():
         print("Modulation index h:", self.h)
         print("Bandwith B:", self.B)
         print("Oversampling:", self.L)
-        print("Samplin - fs:", self.fs, " Ts:")
+        print("Sampling frequency - fs:", self.fs, " Ts:")
 
     def gaussianLPF(self):
         """
