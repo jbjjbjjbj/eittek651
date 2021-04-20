@@ -6,7 +6,7 @@ from scipy.signal import upfirdn, lfilter
 
 class GFSK():
     """
-        GMSK is a special case of GFSK where h = 0.5 -> h is calculated from the frequency peak difference.
+        GFSK is a special case of GFSK where h = 0.5 -> h is calculated from the frequency peak difference.
     """
 
     def __init__(self, bitrate=1.152e6, BTb=0.5, deltaf=288e3*2, fc=1.88e9, L=32) -> None:
@@ -27,7 +27,7 @@ class GFSK():
 
     def print_parameters(self):
         """
-           Prints all the GMSK parameteres             
+           Prints all the GFSK parameteres             
         """
         print("Fb:", self.Fb, "TB:", self.Tb)
         print("BTb:", self.BTb)

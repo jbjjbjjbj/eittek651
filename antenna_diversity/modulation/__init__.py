@@ -1,5 +1,5 @@
 from .pam import PAM
 from .psk import PSK
-from .gmsk import GMSK
+from .gfsk import GFSK
 
 from .runner import Runner
