@@ -10,6 +10,9 @@ class GFSK():
     """
 
     def __init__(self, bitrate=1.152e6, BTb=0.5, deltaf=288e3*2, fc=1.88e9, L=32) -> None:
+        """
+            Default values originate from the DECT standard - ETSI EN 300175-2
+        """
         # setup parameters for gmsk
         self.Fb = bitrate  # biterate
         self.Tb = 1/self.Fb  # bit time
