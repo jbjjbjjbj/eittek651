@@ -3,3 +3,4 @@ env
 .vscode
 .env
 shell.drv
+local.py
