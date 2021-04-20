@@ -4,10 +4,14 @@ from scipy import signal
 from scipy.signal import upfirdn, lfilter
 
 
-class GMSK():
+class GFSK():
+    """
+        GMSK is a special case of GFSK where h = 0.5 -> h is calculated from the frequency peak difference.
+    """
+
     def __init__(self, bitrate=1.152e6, BTb=0.5, deltaf=288e3*2, fc=1.88e9, L=32) -> None:
         # setup parameters for gmsk
-        self.Fb = bitrate
+        self.Fb = bitrate  # biterate
         self.Tb = 1/self.Fb  # bit time
         self.BTb = BTb  # bandwith bit product
         self.deltaf = deltaf  # peak frequency deviation
@@ -16,7 +20,7 @@ class GMSK():
         self.h = deltaf*self.Tb  # modulation index
         self.fs = L*self.Fb  # sample frequency
         self.Ts = 1/self.fs  # sample period
-        self.B = BTb/self.Tb
+        self.B = BTb/self.Tb  # bandwith from Bandwith bit time product.
 
     def print_parameters(self):
         """
