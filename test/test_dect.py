@@ -1,6 +1,9 @@
 import unittest
 from antenna_diversity.protocols import DECT
 import struct
+import os
+from pathlib import Path
+from antenna_diversity import common
 
 
 class TestDECT(unittest.TestCase):
@@ -38,3 +41,21 @@ class TestDECT(unittest.TestCase):
         with self.assertRaisesRegex(struct.error,
                                     "unpack requires a buffer of 55 bytes"):
             DECT(2).unpack_full(byts)
+
+    def test_400_cases(self):
+        # ensure it doesn't matter which dir this is run from
+        p = os.path.join(Path(os.path.realpath(__file__)).parent,
+                         'known_good_four_bit_x_crcs.txt')
+        data = []
+        expected = []
+        with open(p) as f:
+            for line in f:
+                dat, value = line.split()
+                data.append(bytes.fromhex(dat))
+                expected.append(int(value))
+
+        a = DECT(2).create_full(self.input)
+        for i in range(common.shared_length(data, expected)):
+            self.assertEqual(expected[i], a.dect_4bit_crc(data[i]))
+
+

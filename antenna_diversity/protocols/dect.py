@@ -74,7 +74,7 @@ class Full():
     def calculate_xz_field(self):
         test_bytes = prepare_test_bytes(self.b_field)
 
-        x_field = dect_4bit_crc(test_bytes)
+        x_field = self.dect_4bit_crc(test_bytes)
         if x_field.bit_length() > 4:
             raise Exception("x_field bit length is not 4")
 
@@ -105,22 +105,23 @@ class Full():
         return self.calculate_xz_field() == self.xz_field
 
 
-def dect_4bit_crc(data: bytes):
-    a = bitarray()
-    a.frombytes(data)
-    a.extend([0, 0, 0, 0])
-    poly = 1
-    register = 0
+    @staticmethod
+    def dect_4bit_crc(data: bytes):
+        a = bitarray()
+        a.frombytes(data)
+        a.extend([0, 0, 0, 0])
+        poly = 1
+        register = 0
 
-    while len(a) > 0:
-        desicion = register & 8
-        register = (register << 1) & 0xF
-        register |= a.pop(0)
+        while len(a) > 0:
+            desicion = register & 8
+            register = (register << 1) & 0xF
+            register |= a.pop(0)
 
-        if(desicion > 0):
-            register = register ^ poly
+            if(desicion > 0):
+                register = register ^ poly
 
-    return register
+        return register
 
 
 def prepare_test_bytes(b_field: bytes) -> bytes:
