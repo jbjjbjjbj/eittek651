@@ -1,3 +1,6 @@
+# Copyright 2021 Christian Schneider Pedersen, Helene Bach Vistisen, Julian Teule, Mikkel Filt Bengtson, Victor Büttner <beer@0x23.dk>
+#
+# SPDX-License-Identifier: Beerware OR MIT
 import numpy as np
 import math
 from ..common import db_to_power

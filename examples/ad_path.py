@@ -1,3 +1,7 @@
+# Copyright 2021 Christian Schneider Pedersen, Helene Bach Vistisen, Julian Teule, Mikkel Filt Bengtson, Victor Büttner <beer@0x23.dk>
+#
+# SPDX-License-Identifier: Beerware OR MIT
+
 # This pretends as if it were the antenna_diversity module
 import os
 import sys
