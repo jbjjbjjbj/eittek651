@@ -13,7 +13,7 @@ class GFSK():
         """
             Default values originate from the DECT standard - ETSI EN 300175-2
         """
-        # setup parameters for gmsk
+        # setup parameters for gfsk
         self.Fb = bitrate  # biterate
         self.Tb = 1/self.Fb  # bit time
         self.BTb = BTb  # bandwith bit product
@@ -55,7 +55,7 @@ class GFSK():
 
     def modulate(self, bit_sequence):
         """
-            GMFSK modulate a bit sequence
+            GFSK modulate a bit sequence
             Returns signal complex QI signal
         """
         # upsample the bit_sequence, and make et NRZ (i.e. {0,1}-> {-1,1})
@@ -78,7 +78,7 @@ class GFSK():
 
     def demodulate(self, signal_sequence):
         """
-            Demodulate GMSK modulated complex baseband signal
+            Demodulate GFSK modulated complex baseband signal
             See page 105-107 in "digital modulations using python ebook" for explemnation
         """
         I = np.real(signal_sequence)
