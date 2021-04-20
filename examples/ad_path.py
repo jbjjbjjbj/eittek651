@@ -5,3 +5,7 @@ from pathlib import Path
 
 filepath = Path(os.path.realpath(__file__))
 sys.path.append(str(filepath.parent.parent))
+
+
+def nop():
+    pass
