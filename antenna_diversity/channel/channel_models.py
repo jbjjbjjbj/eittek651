@@ -14,20 +14,17 @@ import typing as t
 
 class RayleighAwgnChannel:
     """
-    Create a channel applying rayleigh and awgn fading to the incomming signal
+    Create a channel applying Rayleigh and AWGN fading to the incoming signal
 
-    The constructor should be given the noise_floor relative to the signal,
-    and should not be given as a snr value.
-
-    Incomming signals are always assumed to be complex
+    Incoming signals are always assumed to be complex
     """
 
     def __init__(self,
-                 noise_floor_db: float,
+                 SNR_db: float,
                  coherence_time: float,
                  symbol_period: float,
                  branches: int) -> None:
-        self.noise_floor = noise_floor_db
+        self.SNR_db = SNR_db
 
         # Create a Rayleigh fader for each sample
         self.faders = []
@@ -51,7 +48,7 @@ class RayleighAwgnChannel:
         for i in range(self.branches):
             h = self.faders[i].get_samples(n)
             hs.append(h)
-            ys.append(h*signal + AWGN(n, self.noise_floor))
+            ys.append(h*signal + AWGN(n, self.SNR_db))
 
         return ys, hs
 
