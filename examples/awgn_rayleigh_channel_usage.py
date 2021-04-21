@@ -2,9 +2,13 @@
 #
 # SPDX-License-Identifier: Beerware OR MIT
 
+import ad_path
+
 from antenna_diversity import channel
 import numpy as np
 import matplotlib.pyplot as plt
+
+ad_path.nop()
 
 N = 1000
 # We create a channel with snr=10,
@@ -24,3 +28,5 @@ recv, hs = chnl.attenuate(stuff)
 t = np.arange(N) * 0.000868
 for h in hs:
     plt.plot(t, h)
+
+plt.savefig("out.png")

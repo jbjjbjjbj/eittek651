@@ -11,11 +11,11 @@ from scipy import signal
 
 
 class RayleighFader:
-    def __init__(self, coherence_time: float, symbol_period: float) -> None:
+    def __init__(self, coherence_time: float, sample_period: float) -> None:
         # TODO is this an okay approximation
-        self.samples_per_fade = int(coherence_time // symbol_period)
+        self.samples_per_fade = int(coherence_time // sample_period)
 
-        # Keep track of fading samples accross multiple calls to `process_data`
+        # Keep track of fading samples across multiple calls to `process_data`
         self.last_fading_value = 0
         self.last_fading_left = 0
 

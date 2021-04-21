@@ -22,14 +22,14 @@ class RayleighAwgnChannel:
     def __init__(self,
                  SNR_db: float,
                  coherence_time: float,
-                 symbol_period: float,
+                 sample_period: float,
                  branches: int) -> None:
         self.SNR_db = SNR_db
 
         # Create a Rayleigh fader for each sample
         self.faders = []
         for _ in range(branches):
-            self.faders.append(RayleighFader(coherence_time, symbol_period))
+            self.faders.append(RayleighFader(coherence_time, sample_period))
 
         self.branches = branches
 
