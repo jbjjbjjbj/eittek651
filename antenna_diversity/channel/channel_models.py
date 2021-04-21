@@ -6,8 +6,8 @@ from .fading import rayleigh, RayleighFader
 import numpy as np
 import typing as t
 
-# This file is for the construced channel models
-# The construced channel models (like the RayAWGNchannel function shown below)
+# This file is for the constructed channel models
+# The constructed channel models (like the RayAWGNchannel function shown below)
 # can be made in this file.
 # Other channel models can be made below.
 
@@ -20,11 +20,11 @@ class RayleighAwgnChannel:
     """
 
     def __init__(self,
-                 SNR_db: float,
+                 snr_db: float,
                  coherence_time: float,
                  sample_period: float,
                  branches: int) -> None:
-        self.SNR_db = SNR_db
+        self.snr_db = snr_db
 
         # Create a Rayleigh fader for each sample
         self.faders = []
@@ -36,9 +36,9 @@ class RayleighAwgnChannel:
     def attenuate(self, signal: np.ndarray) \
             -> t.Tuple[t.List[np.ndarray], t.List[np.ndarray]]:
         """
-        Attenuate a signal through all brances
+        Attenuate a signal through all branches
 
-        Returns both the attenuated signals, and they reyleigh samples used.
+        Returns both the attenuated signals, and the Rayleigh samples.
         """
         n = len(signal)
 
@@ -48,7 +48,7 @@ class RayleighAwgnChannel:
         for i in range(self.branches):
             h = self.faders[i].get_samples(n)
             hs.append(h)
-            ys.append(h*signal + AWGN(n, self.SNR_db))
+            ys.append(h*signal + AWGN(n, self.snr_db))
 
         return ys, hs
 

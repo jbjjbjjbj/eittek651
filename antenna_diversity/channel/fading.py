@@ -11,41 +11,59 @@ from scipy import signal
 
 
 class RayleighFader:
+    """
+    Stretches Rayleigh values from `Rayleigh` over multiple samples in
+    accordance to the coherence time.
+
+    The coherence time determines the amount of time where the channel stays
+    constant.
+    To account for this the Rayleigh distribution should be up sampled by some
+    constant.
+
+    Because this works in time, the sampling period must be given.
+    """
+
     def __init__(self, coherence_time: float, sample_period: float) -> None:
         # TODO is this an okay approximation
-        self.samples_per_fade = int(coherence_time // sample_period)
+        self.samples_per_realization = int(coherence_time // sample_period)
 
         # Keep track of fading samples across multiple calls to `process_data`
-        self.last_fading_value = 0
-        self.last_fading_left = 0
+        self.prev_alpha = 0
+        self.prev_left = 0
 
     def get_samples(self, n: int) -> np.ndarray:
         h = np.empty(n)
 
-        # Fill out the first values with the fading value from last
-        from_last = min(self.last_fading_left, n)
-        if from_last != 0:
-            h[:from_last] = np.repeat(self.last_fading_value, from_last)
-            n -= from_last
+        # Fill out the first values with the fading value from last call to
+        # `get_samples`
+        number_from_last = min(self.prev_left, n)
+        if number_from_last != 0:
+            h[:number_from_last] = np.repeat(self.prev_value, number_from_last)
+            n -= number_from_last
 
-            self.last_fading_left -= from_last
+            self.prev_left -= number_from_last
 
         if n <= 0:
             return h
 
-        # Create fading samples
-        alpha = rayleigh(int(np.ceil(n / self.samples_per_fade)))
-        upsampled = signal.upfirdn(h=np.ones(self.samples_per_fade),
+        # Pull out enough values from Rayleigh to satisfy n samples
+        alpha = rayleigh(int(np.ceil(n / self.samples_per_realization)))
+
+        # Upsample alpha so that each value is repeated samples_per_realization
+        # times
+        upsampled = signal.upfirdn(h=np.ones(self.samples_per_realization),
                                    x=alpha,
-                                   up=self.samples_per_fade)
+                                   up=self.samples_per_realization)
 
-        h[from_last:] = upsampled[:n]
+        # Copy the needed samples into h
+        h[number_from_last:] = upsampled[:n]
 
-        # Check for leftovers
-        leftover = len(upsampled) - n
-        if leftover > 0:
-            self.last_fading_left = leftover
-            self.last_fading_value = alpha[-1]
+        # Check that some values from up sampled should be added to the next
+        # `get_sampled` call
+        nr_leftover = len(upsampled) - n
+        if nr_leftover > 0:
+            self.prev_left = nr_leftover
+            self.prev_value = alpha[-1]
 
         return h
 

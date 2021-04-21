@@ -10,16 +10,13 @@ from scipy.signal import upfirdn
 class TestRayleightFader(unittest.TestCase):
     def setUp(self):
         self.f = RayleighFader(10, 1)
-        self.seed()
+        np.random.seed(0)
 
     def assertNPEqual(self, a: np.ndarray, b: np.ndarray, round=None) -> bool:
         if round is not None:
             a = np.around(a, round)
             b = np.around(b, round)
         self.assertTrue(np.array_equal(a, b))
-
-    def seed(self):
-        np.random.seed(0)
 
     def test_fading_samples_exact(self):
         h = self.f.get_samples(10)
