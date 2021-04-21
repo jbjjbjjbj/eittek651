@@ -2,9 +2,8 @@
 #
 # SPDX-License-Identifier: Beerware OR MIT
 from .noise import AWGN
-from .fading import rayleigh
+from .fading import rayleigh, RayleighFader
 import numpy as np
-from scipy import signal
 import typing as t
 
 # This file is for the construced channel models
@@ -26,59 +25,35 @@ class RayleighAwgnChannel:
     def __init__(self,
                  noise_floor_db: float,
                  coherence_time: float,
-                 symbol_period: float) -> None:
+                 symbol_period: float,
+                 branches: int) -> None:
         self.noise_floor = noise_floor_db
 
-        # TODO is this an okay approximation
-        self.samples_per_fade = int(coherence_time // symbol_period)
+        # Create a Rayleigh fader for each sample
+        self.faders = []
+        for _ in range(branches):
+            self.faders.append(RayleighFader(coherence_time, symbol_period))
 
-        # Keep track of fading samples accross multiple calls to `process_data`
-        self.last_fading_value = 0
-        self.last_fading_left = 0
-
-    def get_fading_samples(self, n: int) -> np.ndarray:
-        h = np.empty(n)
-
-        # Fill out the first values with the fading value from last
-        from_last = min(self.last_fading_left, n)
-        if from_last != 0:
-            h[:from_last] = np.repeat(self.last_fading_value, from_last)
-            n -= from_last
-
-            self.last_fading_left -= from_last
-
-        if n <= 0:
-            return h
-
-        # Create fading samples
-        alpha = rayleigh(int(np.ceil(n / self.samples_per_fade)))
-        upsampled = signal.upfirdn(h=np.ones(self.samples_per_fade),
-                                   x=alpha,
-                                   up=self.samples_per_fade)
-
-        h[from_last:] = upsampled[:n]
-
-        # Check for leftovers
-        leftover = len(upsampled) - n
-        if leftover > 0:
-            self.last_fading_left = leftover
-            self.last_fading_value = alpha[-1]
-
-        return h
+        self.branches = branches
 
     def attenuate(self, signal: np.ndarray) \
-            -> t.Tuple[np.ndarray, np.ndarray]:
+            -> t.Tuple[t.List[np.ndarray], t.List[np.ndarray]]:
         """
-        Attenuate a signal through the channel
+        Attenuate a signal through all brances
 
-        Returns both the attenuated signal, and they reyleigh samples used.
+        Returns both the attenuated signals, and they reyleigh samples used.
         """
         n = len(signal)
 
-        h = self.get_fading_samples(n)
-        y = h*signal + AWGN(n, self.noise_floor)
+        hs = []
+        ys = []
 
-        return y, h
+        for i in range(self.branches):
+            h = self.faders[i].get_samples(n)
+            hs.append(h)
+            ys.append(h*signal + AWGN(n, self.noise_floor))
+
+        return ys, hs
 
 
 def rayleigh_awgn(x, snr):
