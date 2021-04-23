@@ -2,10 +2,11 @@
 #
 # SPDX-License-Identifier: Beerware OR MIT
 from .noise import AWGN, AWGN_Matrix
-from .fading import rayleigh, RayleighFader
+from .fading import rayleigh
 import numpy as np
-import typing as t
 import math
+import typing as t
+
 # This file is for the constructed channel models
 # The constructed channel models (like the RayAWGNchannel function shown below)
 # can be made in this file.
@@ -16,7 +17,7 @@ class RayleighAWGNChannel:
     def __init__(self, N: int, snr: float, frame_per_block: int = 6) -> None:
         """
             N: number of branches for the channel
-            snr: the starting snr of the channel in dB
+            snr: the starting SNR of the channel in dB
             frame_per_block: Number of frames per channel block,
                 standard is 6 frames per block, equal to sending
                 at a coherence time of 60ms
@@ -31,12 +32,12 @@ class RayleighAWGNChannel:
         self.frame_per_channel_block = frame_per_block
         self.update_h()
 
-    def run(self, signal: np.ndarray) -> np.ndarray:
+    def run(self, signal: np.ndarray) -> t.Tuple[np.ndarray, np.ndarray]:
         """
             signal: array of complex signal points
             returns: matrix that is N x len(signal) where
             N is number of branches
-            The channel is a rayleight distributed and AWGN i.e.
+            The channel is a Rayleigh distributed and AWGN i.e.
             y = h*x+n
         """
         noise = AWGN_Matrix(self.N, len(signal), self.snr)
