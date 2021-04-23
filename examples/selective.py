@@ -2,9 +2,9 @@ import os
 import time
 import numpy as np
 from numpy.core.fromnumeric import size
-import ad_path
-from antenna_diversity import modulation, encoding, channel, protocols, diversity_schemes
-import matplotlib.pyplot as plt
+import alation, encoding, channel, protocols, diversity_schemes
+import matplotlib.pyplot as pltd_path
+from antenna_diversity import modu
 
 gfsk = modulation.GFSK()
 gfsk.print_parameters()
