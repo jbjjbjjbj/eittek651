@@ -17,11 +17,11 @@ class TheChannel:
         """
             N: number of branches for the channel
             snr: the starting snr of the channel in dB
-            frame_per_block: Number of frames per channel block, 
-                standard is 6 frames per block, equal to sending 
+            frame_per_block: Number of frames per channel block,
+                standard is 6 frames per block, equal to sending
                 at a coherence time of 60ms
 
-            The channel is based on DECT frames, i.e. the channel 
+            The channel is based on DECT frames, i.e. the channel
             should be updated with frame_sendt()
             after each frame have been passed through the channel.
         """
@@ -34,12 +34,13 @@ class TheChannel:
     def run(self, signal):
         """
             signal: array of complex signal points
-            returns: matrix that is N x len(signal) where 
+            returns: matrix that is N x len(signal) where
             N is number of branches
             The channel is a rayleight distributed and AWGN i.e.
             y = h*x+n
         """
         noise = AWGN_Matrix(self.N, len(signal), self.snr)
+        
         # makes the outer product between the h vector and the signal vector
         hTimesSignal = np.outer(self.h, signal)
         return hTimesSignal + noise
@@ -48,7 +49,7 @@ class TheChannel:
         """
             Method to be called after a frame have been sendt
             Must be called by the user, updates the number of frames sendt
-            and updates the channel h if the number of frames sendt 
+            and updates the channel h if the number of frames sendt
             is bigger then or equal to the frames per block
         """
         self.number_of_send_frame += 1
@@ -61,7 +62,7 @@ class TheChannel:
             Method for updating the h array i.e. channel parameter
         """
         self.h = np.transpose(np.random.rayleigh(
-            size=self.N, scale=1/math.sqrt(2)))
+            size=self.N, scale=1 / math.sqrt(2)))
 
     def print_parameters(self):
         print(self.__dict__)
@@ -71,5 +72,5 @@ def rayleigh_awgn(x, snr):
     n = len(x)
     alpha = rayleigh(n)
     W = AWGN(n, snr)
-    y = alpha*x + W
+    y = alpha * x + W
     return y
