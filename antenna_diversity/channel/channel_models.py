@@ -43,7 +43,7 @@ class RayleighAWGNChannel:
 
         # makes the outer product between the h vector and the signal vector
         hTimesSignal = np.outer(self.h, signal)
-        return hTimesSignal + noise
+        return hTimesSignal + noise, self.h
 
     def frame_sendt(self) -> None:
         """
