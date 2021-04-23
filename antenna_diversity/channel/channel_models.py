@@ -12,8 +12,8 @@ import math
 # Other channel models can be made below.
 
 
-class TheChannel:
-    def __init__(self, N, snr, frame_per_block=6) -> None:
+class RayleighAWGNChannel:
+    def __init__(self, N: int, snr: float, frame_per_block: int = 6) -> None:
         """
             N: number of branches for the channel
             snr: the starting snr of the channel in dB
@@ -31,7 +31,7 @@ class TheChannel:
         self.frame_per_channel_block = frame_per_block
         self.update_h()
 
-    def run(self, signal):
+    def run(self, signal: np.ndarray) -> np.ndarray:
         """
             signal: array of complex signal points
             returns: matrix that is N x len(signal) where
@@ -40,12 +40,12 @@ class TheChannel:
             y = h*x+n
         """
         noise = AWGN_Matrix(self.N, len(signal), self.snr)
-        
+
         # makes the outer product between the h vector and the signal vector
         hTimesSignal = np.outer(self.h, signal)
         return hTimesSignal + noise
 
-    def frame_sendt(self):
+    def frame_sendt(self) -> None:
         """
             Method to be called after a frame have been sendt
             Must be called by the user, updates the number of frames sendt
@@ -57,14 +57,14 @@ class TheChannel:
             self.update_h()
             self.number_of_send_frame = 0
 
-    def update_h(self):
+    def update_h(self) -> None:
         """
             Method for updating the h array i.e. channel parameter
         """
         self.h = np.transpose(np.random.rayleigh(
             size=self.N, scale=1 / math.sqrt(2)))
 
-    def print_parameters(self):
+    def print_parameters(self) -> None:
         print(self.__dict__)
 
 

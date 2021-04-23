@@ -17,7 +17,7 @@ np.random.seed(0)
 
 # construct a channel object called the channel, with N = 2 branches, snr
 # 0 [dB]
-channel = channel.TheChannel(N=2, snr=0)
+channel = channel.RayleighAWGNChannel(N=2, snr=0)
 
 # print parameters just to see the other deafault values
 # the class instantly creates the first channel h parameters
