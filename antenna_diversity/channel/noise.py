@@ -16,3 +16,16 @@ def AWGN(nrElementOut, snr):
     W = np.random.standard_normal(
         size=nrElementOut)*sigma+1j*np.random.standard_normal(size=nrElementOut)*sigma
     return W
+
+
+def AWGN_Matrix(rows, coloums, snr):
+    """
+        Takes in number of rows and coloums
+        returns a matrix with size: rows x coloums with complex normal distributed varaibles
+    """
+    W = np.empty(shape=(rows, coloums), dtype=complex)
+    sigma = math.sqrt((1/db_to_power(snr))*1/2)
+    for row in range(rows):
+        W[row] = np.random.standard_normal(
+            size=coloums)*sigma+1j*np.random.standard_normal(size=coloums)
+    return W
