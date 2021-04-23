@@ -45,7 +45,7 @@ class RayleighAWGNChannel:
         hTimesSignal = np.outer(self.h, signal)
         return hTimesSignal + noise, self.h
 
-    def frame_sendt(self) -> None:
+    def frame_sent(self) -> None:
         """
             Method to be called after a frame have been sendt
             Must be called by the user, updates the number of frames sendt
