@@ -1,32 +1,48 @@
-# Copyright 2021 Christian Schneider Pedersen <cspe18@student.aau.dk>, Helene Bach Vistisen, Julian Teule, Mikkel Filt Bengtson, Victor Büttner <beer@0x23.dk>
-#
-# SPDX-License-Identifier: Beerware OR MIT
-
+import os
+import time
 import ad_path
 
-from antenna_diversity import channel
+import antenna_diversity.modulation as modulation
+import antenna_diversity.channel as channel
 import numpy as np
-import matplotlib.pyplot as plt
 
-ad_path.nop()
+"""
+    This files demonstrates how to use
+    the TheChannel class for simulating and rayleight + AWGN channel
 
-N = 1000
-# We create a channel with snr=10,
-#   coherence_time=0.066,
-#   bit_period=0.000868
-#   and two diversity brances
-# The coherence time and bit period were calculated from DECT
-# and a indoor walking speed of 2.5 m/s
-chnl = channel.RayleighAwgnChannel(10, 0.066, 0.000868, 2)
 
-# Lets create a constant signal
-stuff = np.repeat(1 + 2j, N)
-recv, hs = chnl.attenuate(stuff)
+"""
+# set random seed for getting same random returns
+np.random.seed(0)
 
-# Lets just plot all the branches h values
-# The h's are sampled with a T=0.000868
-t = np.arange(N) * 0.000868
-for h in hs:
-    plt.plot(t, h)
+# construct a channel object called the channel, with N = 2 branches, snr
+# 0 [dB]
+channel = channel.RayleighAWGNChannel(N=2, snr=0)
 
-plt.savefig("out.png")
+# print parameters just to see the other deafault values
+# the class instantly creates the first channel h parameters
+channel.print_parameters()
+
+# make a test sequence, this will normally be the modulate signal.
+test_sequence = np.array([1, 1, 1, 1, 1, 1, 1, 1], dtype=complex)
+print("test:", test_sequence)
+
+# run the test sequence throught the channel
+hat_test_sequence = channel.run(test_sequence)
+
+# as there are two branches hat_test_sequence will return a 2 x
+# len(test_sequence) array (a matrix)
+print("hat_test_seqeunce\n", hat_test_sequence)
+
+# prints the samples of each branch independ
+print("hat_test_sequence[0]\n", hat_test_sequence[0])
+print("hat_test_sequence[1]\n", hat_test_sequence[1])
+
+# After the whole frame have been throught the channel, ,
+# call frame_sendt() to update the channel
+# The channel will automatically update to the next block
+# after 6 frames have been sendt
+channel.print_parameters()
+for i in range(10):
+    channel.frame_sendt()
+    channel.print_parameters()
