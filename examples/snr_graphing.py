@@ -11,7 +11,7 @@ ad_path.nop()
 
 class SimContext:
     def __init__(self, branches):
-        self.modulator = modulation.PSK(2)
+        self.modulator = modulation.GFSK()
         self.symbolenc = encoding.SymbolEncoder(2)
         self.branches = branches
 
@@ -48,7 +48,7 @@ class SimContext:
         bit_stats = np.zeros(2)
 
         run = 0
-        while run < 1:
+        while run < 10 * max(1, snr):
             bit_stats += np.array(next(sim_gen))
             run += 1
 
@@ -66,13 +66,15 @@ def run_through_snrs(ctx: SimContext, snrs: np.ndarray, worker_pool) \
 
 
 if __name__ == "__main__":
-    worker_pool = mp.Pool(processes=mp.cpu_count())
+    worker_pool = mp.Pool(processes=8)
 
-    snrs = np.arange(-10, 10+1)
-    for branches in [1, 2]:
+    snrs = np.arange(-10, 30+1)
+    print("snrs:", snrs)
+    for branches in [1, 2, 3, 4]:
         ctx = SimContext(branches)
 
         probs = run_through_snrs(ctx, snrs, worker_pool)
+        print(f"{branches}:", probs)
 
         plt.plot(snrs, probs, label=f"{branches} branches")
 
