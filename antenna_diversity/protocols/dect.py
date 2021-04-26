@@ -69,7 +69,7 @@ class Full():
                 struct.unpack(self.a_field_format, a_field)
 
     @classmethod
-    def from_bytes(cls, raw_packet: bytes) -> None:
+    def from_bytes(cls, raw_packet: bytes) -> Full:
         """
         Constructs a packet from 55 bytes / 440 bits which consists exclusively of those bytes.
         No sanity check is made, anything goes, and chances are if you check CRCs afterwards
@@ -77,7 +77,7 @@ class Full():
         """
         return cls(raw_packet, from_payload=False)
 
-    def calculate_a_crc_field(self):
+    def calculate_a_crc_field(self) -> int:
         """
         Calculates the 2 byte CRC for the A-header
         """
@@ -85,7 +85,7 @@ class Full():
         fields_to_crc = struct.pack('B5s', self.a_header, self.a_tail)
         return crc.Crc16DectR().calc(fields_to_crc)
 
-    def calculate_xz_crc_field(self):
+    def calculate_xz_crc_field(self) -> int:
         """
         Calculates the X and Z field which in total is 8 bits where each nibble
         are identical 4 bit CRCs.
