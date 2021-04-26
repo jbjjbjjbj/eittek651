@@ -35,6 +35,13 @@ class TestFull(unittest.TestCase):
         b[-1] = 0
         self.assertFalse(dect.Full.from_bytes(bytes(b)).check_xz_crc_field())
 
+    def test_check_a_crc(self):
+        self.assertTrue(dect.Full(self.input).check_a_crc_field())
+
+        b = bytearray(self.dect_packet)
+        b[7] = 0
+        self.assertFalse(dect.Full.from_bytes(bytes(b)).check_a_crc_field())
+
     def test_check_payload_len(self):
         with self.assertRaisesRegex(Exception, "payload is not 40 long"):
             dect.Full(b'hej')
