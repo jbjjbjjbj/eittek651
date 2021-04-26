@@ -38,7 +38,7 @@ class RayleighFader:
         # `get_samples`
         number_from_last = min(self.prev_left, n)
         if number_from_last != 0:
-            h[:number_from_last] = np.repeat(self.prev_value, number_from_last)
+            h[:number_from_last] = np.repeat(self.prev_alpha, number_from_last)
             n -= number_from_last
 
             self.prev_left -= number_from_last
@@ -63,7 +63,7 @@ class RayleighFader:
         nr_leftover = len(upsampled) - n
         if nr_leftover > 0:
             self.prev_left = nr_leftover
-            self.prev_value = alpha[-1]
+            self.prev_alpha = alpha[-1]
 
         return h
 
