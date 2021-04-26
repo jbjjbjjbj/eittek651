@@ -23,7 +23,7 @@ class RayleighAWGNChannel:
                 at a coherence time of 60ms
 
             The channel is based on DECT frames, i.e. the channel
-            should be updated with frame_sendt()
+            should be updated with frame_sent()
             after each frame have been passed through the channel.
         """
         self.N = N
@@ -43,8 +43,8 @@ class RayleighAWGNChannel:
         noise = AWGN_Matrix(self.N, len(signal), self.snr)
 
         # makes the outer product between the h vector and the signal vector
-        hTimesSignal = np.outer(self.h, signal)
-        return hTimesSignal + noise, self.h
+        h_times_signal = np.outer(self.h, signal)
+        return h_times_signal + noise, self.h
 
     def frame_sent(self) -> None:
         """

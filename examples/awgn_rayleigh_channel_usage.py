@@ -1,11 +1,6 @@
 # Copyright 2021 Christian Schneider Pedersen <cspe18@student.aau.dk>, Helene Bach Vistisen, Julian Teule, Mikkel Filt Bengtson, Victor Büttner <beer@0x23.dk>
 #
 # SPDX-License-Identifier: Beerware OR MIT
-import os
-import time
-import ad_path
-
-import antenna_diversity.modulation as modulation
 import antenna_diversity.channel as channel
 import numpy as np
 
@@ -42,10 +37,10 @@ print("hat_test_sequence[0]\n", hat_test_sequence[0])
 print("hat_test_sequence[1]\n", hat_test_sequence[1])
 
 # After the whole frame have been through the channel,
-# call frame_sendt() to update the channel
+# call frame_sent() to update the channel
 # The channel will automatically update to the next block
 # after 6 frames have been sendt
 channel.print_parameters()
 for i in range(10):
-    channel.frame_sendt()
+    channel.frame_sent()
     channel.print_parameters()
