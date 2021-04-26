@@ -10,7 +10,7 @@ import numpy as np
 #   Signal x(t) has unit average power
 #   SNR is instantaneous
 
-def MRC(input:np.array, ray:np.array):
+def MRC(input: np.array, ray: np.array) -> np.ndarray:
     #Input in this context is the recieved signals from n antennas/branches
     #   with fading and noise: r=h*x+n
     #Ray is the fading used to give MRC its weight

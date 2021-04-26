@@ -2,8 +2,7 @@
 #
 # SPDX-License-Identifier: Beerware OR MIT
 
-from antenna_diversity.channel import AWGN
-from antenna_diversity.channel import rayleigh
+from antenna_diversity.channel import AWGN, rayleigh
 from antenna_diversity.diversity_schemes import MRC
 from antenna_diversity.encoding import SymbolEncoder
 from antenna_diversity import modulation
