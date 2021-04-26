@@ -5,8 +5,10 @@ import os
 from antenna_diversity import encoding, common, channel, diversity, modulation
 import matplotlib.pyplot as plt
 import multiprocessing as mp
+import time
 
-conf_runs = 10
+conf_runs = 2000
+conf_extra_per_snr_over_0 = 100
 conf_processors = 8
 
 ad_path.nop()
@@ -14,7 +16,7 @@ ad_path.nop()
 
 class SimContext:
     def __init__(self, branches):
-        self.modulator = modulation.GFSK()
+        self.modulator = modulation.PSK(2)
         self.symbolenc = encoding.SymbolEncoder(2)
         self.branches = branches
 
@@ -51,12 +53,16 @@ class SimContext:
         bit_stats = np.zeros(2)
 
         run = 0
-        while run < (conf_runs * max(1, snr)):
+        start = time.time()
+        while run < (conf_runs + conf_extra_per_snr_over_0 * max(1, snr)):
             bit_stats += np.array(next(sim_gen))
             run += 1
 
+        duration = time.time() - start
+
         prob = bit_stats[0] / bit_stats[1]
-        print(f"branches: {self.branches}, snr: {snr}, prob={prob}")
+        print(f"branches: {self.branches}, snr: {snr}, prob={prob}, \
+                time_per_run={duration / run}")
         return prob
 
 
@@ -72,8 +78,9 @@ if __name__ == "__main__":
     worker_pool = mp.Pool(processes=conf_processors)
 
     snrs = np.arange(-10, 30+1)
+    branches = [1, 2, 3, 4]
     print("snrs:", snrs)
-    for branches in [1, 2, 3, 4]:
+    for branches in branches:
         ctx = SimContext(branches)
 
         probs = run_through_snrs(ctx, snrs, worker_pool)
@@ -85,4 +92,5 @@ if __name__ == "__main__":
     plt.ylabel("BER")
     plt.xlabel("Symbol SNR [dB]")
     plt.legend()
+    plt.title(str(ctx.modulator))
     plt.savefig("out.png")

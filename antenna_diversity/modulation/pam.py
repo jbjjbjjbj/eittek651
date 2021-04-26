@@ -30,6 +30,8 @@ def generate_lookup(M: int) -> t.List[int]:
 
 
 class PAM(ConstellationModulator):
+    name = "Phase Shift Keying"
+
     def generate_constellation(self, energy: float) -> np.ndarray:
         d = math.sqrt(3 * energy / (self.M**2 - 1))
         return np.array(generate_lookup(self.M)) * d

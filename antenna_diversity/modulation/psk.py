@@ -34,6 +34,8 @@ def generate_psk_constellation(M: int) -> t.List[complex]:
 
 
 class PSK(ConstellationModulator):
+    name = "Phase Shift Keying"
+
     def generate_constellation(self, energy: float) -> np.ndarray:
         return np.array(generate_psk_constellation(self.M)) * math.sqrt(energy)
 

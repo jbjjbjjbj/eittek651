@@ -88,3 +88,6 @@ class GFSK():
         z = z1 - z2
         a_hat = (z[2*self.L-1:-self.L:self.L] < 0).astype(int)
         return a_hat
+
+    def __str__(self):
+        return "Gausian Frequency Shift Keying"
