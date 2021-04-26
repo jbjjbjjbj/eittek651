@@ -1,6 +1,7 @@
 import numpy as np
 from . import modulation
 from . import channel
+from . import diversity_schemes
 from . import encoding, protocols
 
 if __name__ == "__main__":
@@ -20,6 +21,7 @@ if __name__ == "__main__":
 
     my_modulated = my_pam.modulate(my_symbols)
     print("modulated", my_modulated)
+
     my_modulated = channel.rayleigh_awgn(my_modulated, 22)
 
     my_demodulated = my_pam.demodulate(my_modulated)
