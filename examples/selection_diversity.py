@@ -12,4 +12,6 @@ print('x:', x)
 
 y, index = diversity.Selection.selection(x, h)
 
-print('y:', y, '\n index:', index, '\n h:', h[index])
+print("y:", y)
+print("index:", index)
+print("h:", h[index])
