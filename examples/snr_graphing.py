@@ -6,8 +6,11 @@ from antenna_diversity import encoding, common, channel, diversity, modulation
 import matplotlib.pyplot as plt
 import multiprocessing as mp
 
+conf_runs = 10
+conf_processors = 8
 
 ad_path.nop()
+
 
 class SimContext:
     def __init__(self, branches):
@@ -48,7 +51,7 @@ class SimContext:
         bit_stats = np.zeros(2)
 
         run = 0
-        while run < 10 * max(1, snr):
+        while run < (conf_runs * max(1, snr)):
             bit_stats += np.array(next(sim_gen))
             run += 1
 
@@ -66,7 +69,7 @@ def run_through_snrs(ctx: SimContext, snrs: np.ndarray, worker_pool) \
 
 
 if __name__ == "__main__":
-    worker_pool = mp.Pool(processes=8)
+    worker_pool = mp.Pool(processes=conf_processors)
 
     snrs = np.arange(-10, 30+1)
     print("snrs:", snrs)
