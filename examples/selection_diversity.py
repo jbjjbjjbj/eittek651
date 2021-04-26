@@ -10,7 +10,7 @@ h = np.array([0.8, 1.2, 1])
 x = np.matrix('1 2 3 ; 4 5 6 ; 7 8 9')
 print('x:', x)
 
-y, index = diversity.Selection.selection(x, h)
+y, index = diversity.selection(x, h)
 
 print("y:", y)
 print("index:", index)

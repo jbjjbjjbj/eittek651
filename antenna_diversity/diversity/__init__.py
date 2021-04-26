@@ -1,1 +1,1 @@
-from .Selection import selection
+from .selection import selection
