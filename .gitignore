@@ -4,6 +4,5 @@ env
 .env
 shell.drv
 local.py
-etellerandet.py
 constellation.png
 out.png
