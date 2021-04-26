@@ -69,7 +69,7 @@ class Full():
                 struct.unpack(self.a_field_format, a_field)
 
     @classmethod
-    def from_bytes(cls, raw_packet: bytes) -> Full:
+    def from_bytes(cls, raw_packet: bytes):  # Not sure about return type
         """
         Constructs a packet from 55 bytes / 440 bits which consists exclusively of those bytes.
         No sanity check is made, anything goes, and chances are if you check CRCs afterwards
