@@ -27,4 +27,3 @@ if __name__ == "__main__":
 
     if not np.array_equal(my_symbols, my_demodulated):
         print("not same")
-
