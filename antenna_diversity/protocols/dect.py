@@ -40,6 +40,7 @@ class Full():
         Contructs a packet from 40 bytes / 320 bits payload.
         Various headers and the tail in the A-field are filled with garbage
         and CRCs are calculated by default.
+        If you want to set from_payload=True, preferably use the from_bytes class method instead.
         """
         if m != 2:
             raise Exception("Only m=2 is supported")
