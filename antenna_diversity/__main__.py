@@ -22,15 +22,10 @@ if __name__ == "__main__":
     my_modulated = my_pam.modulate(my_symbols)
     print("modulated", my_modulated)
 
-    nodiversity = channel.rayleigh_awgn(my_modulated, 22)
-    mrcdiversity = diversity_schemes.MRC(my_modulated,-10,2)
+    my_modulated = channel.rayleigh_awgn(my_modulated, 22)
 
-    nodiv_demodulated = my_pam.demodulate(nodiversity)
-    print(nodiv_demodulated)
-    mrcdiv_demodulated = my_pam.demodulate(mrcdiversity) 
-    print(mrcdiv_demodulated) #The MRC diversity schemes seems to be semi-stable with two antennas with a -5 dB SNR and -8 with three
+    my_demodulated = my_pam.demodulate(my_modulated)
+    print(my_demodulated)
 
-    if not np.array_equal(my_symbols, nodiv_demodulated):
-        print("No diversity: not same")
-    if not np.array_equal(my_symbols, mrcdiv_demodulated):
-        print("MRC diversity: not same")
+    if not np.array_equal(my_symbols, my_demodulated):
+        print("not same")
