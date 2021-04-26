@@ -16,6 +16,8 @@ class ConstellationModulator:
     When extending, one must implement the "generate_constellation()" method
     """
 
+    name = "none"
+
     def __init__(self, M: int, use_gray: bool = True, energy: float = 1) -> None:
         # Set members
         self.M = M
@@ -55,3 +57,6 @@ class ConstellationModulator:
 
         plt.scatter(np.real(self.constellation), np.imag(self.constellation))
         plt.savefig(where)
+
+    def __str__(self):
+        return f"{self.name} ({self.M})"
