@@ -11,34 +11,39 @@ import os
 import time
 
 import ad_path
-from antenna_diversity import modulation, encoding, channel, protocols
+from antenna_diversity import modulation, encoding, channel, \
+        diversity_technique
+from antenna_diversity.protocols import dect
 
 ad_path.nop()
 
 
 M = 2
-dect = protocols.DECT(M)
 enc = encoding.SymbolEncoder(M)
 mod = modulation.PSK(M)
 
 # Nice shorthand /s
-chnl = channel.RayleighAwgnChannel(10, 0.066, 0.000868)
+chnl = channel.RayleighAWGNChannel(2, 10)
 
 
 def run_sim() -> bool:
     # Create random dect packet
     payload = os.urandom(40)
-    data = dect.create_full(payload).to_bytes()
+    data = dect.Full(payload).to_bytes()
 
     # Run through simulation chain
     symbols = enc.encode_msb(data)
     moded = mod.modulate(symbols)
-    recv, _ = chnl.attenuate(moded)
-    symbols_hat = mod.demodulate(recv)
+    recv, h = chnl.run(moded)
+    combined, _ = diversity_technique.selection(recv, h)
+
+    symbols_hat = mod.demodulate(combined)
     data_hat = enc.decode_msb(symbols_hat)
 
+    chnl.frame_sent()
+
     # Check it
-    return dect.unpack_full(data_hat).check_crc()
+    return not dect.Full.from_bytes(data_hat).check_a_crc_field()
 
 
 num_packets = 10000

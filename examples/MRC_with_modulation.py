@@ -3,17 +3,17 @@
 # SPDX-License-Identifier: Beerware OR MIT
 import ad_path
 from antenna_diversity.channel import channel_models
-from antenna_diversity.diversity_schemes import MRC
+from antenna_diversity.diversity_technique import mrc
 from antenna_diversity.encoding import SymbolEncoder
 from antenna_diversity import modulation
 import numpy as np
-from antenna_diversity.protocols import DECT
+from antenna_diversity.protocols import dect
 
 ad_path.nop()
 
 # Create DECT packet
 payload = b'0123456789012345678901234567890123456789'
-dect_packet = DECT(2).create_full(payload)
+dect_packet = dect.Full(payload)
 
 # Modulate DECT packet
 my_pam = modulation.PSK(2)
@@ -33,7 +33,7 @@ print(r)
 print(h)
 
 # Using the diversity scheme and demodulate the signal
-mrc = MRC(r, h)
+mrc = mrc(r, h)
 my_demodulate = my_pam.demodulate(mrc)
 print(my_demodulate)
 

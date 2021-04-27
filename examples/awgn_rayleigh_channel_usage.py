@@ -1,8 +1,12 @@
 # Copyright 2021 Christian Schneider Pedersen <cspe18@student.aau.dk>, Helene Bach Vistisen, Julian Teule, Mikkel Filt Bengtson, Victor Büttner <beer@0x23.dk>
 #
 # SPDX-License-Identifier: Beerware OR MIT
+import ad_path
+
 import antenna_diversity.channel as channel
 import numpy as np
+
+ad_path.nop()
 
 """
     This files demonstrates how to use

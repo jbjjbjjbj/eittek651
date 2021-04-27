@@ -2,4 +2,5 @@
 #
 # SPDX-License-Identifier: Beerware OR MIT
 
-from .combining import MRC
+from .combining import mrc
+from .selection import selection
