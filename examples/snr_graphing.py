@@ -2,12 +2,14 @@ import ad_path
 import typing as t
 import numpy as np
 import os
-from antenna_diversity import encoding, common, channel, diversity, modulation
+from antenna_diversity import \
+    encoding, common, channel, diversity, modulation, diversity_schemes
 import matplotlib.pyplot as plt
 import multiprocessing as mp
 import time
 
-conf_runs = 2000
+conf_title = "Selection Combining with PSK(2)"
+conf_runs = 1000
 conf_extra_per_snr_over_0 = 100
 conf_processors = 8
 
@@ -38,9 +40,10 @@ class SimContext:
         recv, h = chnl.run(moded)
         # recv = moded * self.channel.h[0] + channel.AWGN(len(moded), self.channel.snr)
 
-        recv = diversity.selection(recv, h)
+        recv, _ = diversity.selection(recv, h)
+        # recv = diversity_schemes.MRC(recv, h)
 
-        symbols_hat = self.modulator.demodulate(recv[0])
+        symbols_hat = self.modulator.demodulate(recv)
         data_hat = self.symbolenc.decode_msb(symbols_hat)
 
         chnl.frame_sent()
@@ -77,7 +80,7 @@ def run_through_snrs(ctx: SimContext, snrs: np.ndarray, worker_pool) \
 if __name__ == "__main__":
     worker_pool = mp.Pool(processes=conf_processors)
 
-    snrs = np.arange(-10, 30+1)
+    snrs = np.arange(-10, 10+1)
     branches = [1, 2, 3, 4]
     print("snrs:", snrs)
     for branches in branches:
@@ -92,5 +95,5 @@ if __name__ == "__main__":
     plt.ylabel("BER")
     plt.xlabel("Symbol SNR [dB]")
     plt.legend()
-    plt.title(str(ctx.modulator))
+    plt.title(conf_title)
     plt.savefig("out.png")
