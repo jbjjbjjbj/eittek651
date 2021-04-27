@@ -67,3 +67,6 @@ class TestFull(unittest.TestCase):
         a = dect.Full(self.input)
         for i in range(common.shared_length(data, expected)):
             self.assertEqual(expected[i], a.x_crc_4_bit(data[i]))
+
+    def test_get_random(self):
+        dect.Full.get_random()  # We have no known good so this is just run

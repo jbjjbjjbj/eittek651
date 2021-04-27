@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: Beerware OR MIT
 import struct
+import numpy as np
 from crccheck import crc
 from bitarray import bitarray
 
@@ -73,13 +74,21 @@ class Full():
                 struct.unpack(self.a_field_format, a_field)
 
     @classmethod
-    def from_bytes(cls, raw_packet: bytes):  # Not sure about return type
+    def from_bytes(cls, raw_packet: bytes):  # Not sure about types
         """
         Constructs a packet from 55 bytes / 440 bits which consists exclusively of those bytes.
         No sanity check is made, anything goes, and chances are if you check CRCs afterwards
         that they will detect an error.
         """
         return cls(raw_packet, from_payload=False)
+
+    @classmethod
+    def get_random(cls):  # Not sure about types
+        """
+        Returns a packet with random payload.
+        """
+        payload = np.random.bytes(40)
+        return cls(payload, from_payload=True)
 
     def calculate_a_crc_field(self) -> int:
         """
