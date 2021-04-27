@@ -6,3 +6,4 @@ shell.drv
 local.py
 constellation.png
 out.png
+*.h5
