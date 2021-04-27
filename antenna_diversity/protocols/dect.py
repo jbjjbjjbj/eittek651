@@ -49,7 +49,7 @@ class Full():
 
         if from_payload:
             self.a_header = int('1'*8, 2)
-            self.a_tail = bytes.fromhex('AA' * int(40/8))
+            self.a_tail = bytes([0xAA] * int(40 / 8))
             self.a_crc = self.calculate_a_crc_field()
 
             self.preamble = int('10' * 8, 2)
