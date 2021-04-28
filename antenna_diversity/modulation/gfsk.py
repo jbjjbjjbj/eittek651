@@ -39,7 +39,7 @@ class GFSK():
         print("Oversampling:", self.L)
         print("Sampling frequency - fs:", self.fs, " Ts:", self.Ts)
 
-    def gaussianLPF(self):
+    def gaussianLPF(self) -> np.ndarray:
         """
             Gaussian low pass filter see page 100 in "digital modulations using
             python ebook" for explemnation return the
@@ -54,7 +54,7 @@ class GFSK():
         h_norm = h/np.sum(h)
         return h_norm
 
-    def modulate(self, bit_sequence):
+    def modulate(self, bit_sequence: np.ndarray) -> np.ndarray:
         """
             GFSK modulate a bit sequence
             Returns signal complex QI signal
@@ -79,7 +79,7 @@ class GFSK():
         s_bb = I-1j*Q
         return s_bb
 
-    def demodulate(self, signal_sequence):
+    def demodulate(self, signal_sequence: np.ndarray) -> np.ndarray:
         """
             Demodulate GFSK modulated complex baseband signal
             See page 105-107 in "digital modulations using python ebook" for explemnation
