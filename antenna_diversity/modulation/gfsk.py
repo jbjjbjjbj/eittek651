@@ -59,7 +59,7 @@ class GFSK():
             GFSK modulate a bit sequence
             Returns signal complex QI signal
         """
-        # Convert the bit_sequence to integer type
+        # Prevent underflow in case of a bit_sequence of unsigned int (2*0-1 = underflow).
         bit_sequence_signed = bit_sequence.astype(int)
         # upsample the bit_sequence, and make et NRZ (i.e. {0,1}-> {-1,1})
         c_t = upfirdn(h=[1]*self.L, x=2*bit_sequence_signed-1, up=self.L)
