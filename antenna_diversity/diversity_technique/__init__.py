@@ -3,4 +3,5 @@
 # SPDX-License-Identifier: Beerware OR MIT
 
 from .combining import mrc
+from .combining import egc
 from .selection import selection

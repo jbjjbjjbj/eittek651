@@ -12,7 +12,7 @@ import numpy as np
 
 
 def mrc(signal: np.ndarray, ray: np.ndarray) -> np.ndarray:
-    # Input in this context is the recieved signals from n antennas/branches
+    # signal in this context is the recieved signals from n antennas/branches
     # with fading and noise: r=h*x+n.
     # Ray is the fading used to give MRC its weight.
     # The expected output y is the sum of all recieved signals weighted by w.
@@ -31,4 +31,17 @@ def mrc(signal: np.ndarray, ray: np.ndarray) -> np.ndarray:
     # We ignore the type as there are issues with the unkdown dimension of
     # signal and ray
     y: np.ndarray = W.dot(r)  # type: ignore
+    return y
+
+
+def egc(signal: np.ndarray) -> np.ndarray:
+    # signal in this context is the recieved signals from n antennas/branches
+    # with fading and noise: r=h*x+n.
+    # The expected output y is the sum of all recieved signals weighted by w.
+    r = signal
+    l = len(r)                       # Here we generate a r long vector
+    w = arr = [1 for i in range(l)]  # which get filled with 1s since e^j0=1
+    w = np.transpose(w)
+    # returned result: y = w H y = w H h*x + w H n
+    y: np.ndarray = w.dot(r)
     return y
