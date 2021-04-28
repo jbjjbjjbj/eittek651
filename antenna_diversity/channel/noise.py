@@ -28,5 +28,5 @@ def AWGN_Matrix(rows: int, coloums: int, snr: float) -> np.ndarray:
     sigma = math.sqrt((1 / db_to_power(snr)) * 1 / 2)
     for row in range(rows):
         W[row] = np.random.standard_normal(
-            size=coloums) * sigma + 1j * np.random.standard_normal(size=coloums)
+            size=coloums) * sigma + 1j * np.random.standard_normal(size=coloums) * sigma
     return W

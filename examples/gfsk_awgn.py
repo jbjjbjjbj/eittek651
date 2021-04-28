@@ -16,7 +16,7 @@ def run_gfsk_simulation(snr):
     u = np.random.randint(2, size=chunkSize)
     s = gfsk.modulate(u)
     w = channel.noise.AWGN(len(s), snr=snr)
-    r = s+w
+    r = s + w
     hat_U = gfsk.demodulate(r)
     wrong, n = modulation.runner.Runner.count_symbol_errors(u, hat_U)
     return wrong, n
@@ -30,7 +30,7 @@ for i, gamma in enumerate(snr):
     w_t, n = run_gfsk_simulation(snr=gamma)
     num_wrong = w_t
     number = n
-    while(num_wrong < 1000 and number < chunkSize*1000):
+    while(num_wrong < 1000 and number < chunkSize * 1000):
         w_t, n = run_gfsk_simulation(snr=gamma)
         num_wrong += w_t
         number += n
