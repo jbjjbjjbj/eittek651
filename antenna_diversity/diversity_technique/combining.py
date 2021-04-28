@@ -40,8 +40,8 @@ def egc(signal: np.ndarray) -> np.ndarray:
     # The expected output y is the sum of all recieved signals weighted by w.
     r = signal
     l = len(r)                       # Here we generate a r long vector
-    w = arr = [1 for i in range(l)]  # which get filled with 1s since e^j0=1
+    w = np.ones(l)  # which get filled with 1s since e^j0=1
     w = np.transpose(w)
     # returned result: y = w H y = w H h*x + w H n
-    y: np.ndarray = w.dot(r)
+    y: np.ndarray = w.dot(r)  # type: ignore
     return y
