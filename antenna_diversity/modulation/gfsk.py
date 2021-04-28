@@ -6,7 +6,8 @@ from scipy.signal import upfirdn, lfilter
 
 class GFSK():
     """
-        GFSK is a special case of GFSK where h = 0.5 -> h is calculated from the frequency peak difference.
+        GFSK is a special case of GFSK where h = 0.5 -> h is calculated from
+        the frequency peak difference.
     """
 
     def __init__(self, bitrate=1.152e6, BTb=0.5, deltaf=288e3*2, fc=1.88e9, L=32) -> None:
@@ -27,7 +28,7 @@ class GFSK():
 
     def print_parameters(self):
         """
-           Prints all the GFSK parameteres             
+           Prints all the GFSK parameteres
         """
         print("Fb:", self.Fb, "TB:", self.Tb)
         print("BTb:", self.BTb)
@@ -40,8 +41,8 @@ class GFSK():
 
     def gaussianLPF(self):
         """
-            Gaussian low pass filter see page 100 in "digital modulations using python ebook" for explemnation
-            return the 
+            Gaussian low pass filter see page 100 in "digital modulations using
+            python ebook" for explemnation return the
         """
         # make time samples
         t = np.arange(start=-1*self.Tb, stop=1*self.Tb +
@@ -58,8 +59,10 @@ class GFSK():
             GFSK modulate a bit sequence
             Returns signal complex QI signal
         """
+        # Convert the bit_sequence to integer type
+        bit_sequence_signed = bit_sequence.astype(int)
         # upsample the bit_sequence, and make et NRZ (i.e. {0,1}-> {-1,1})
-        c_t = upfirdn(h=[1]*self.L, x=2*bit_sequence-1, up=self.L)
+        c_t = upfirdn(h=[1]*self.L, x=2*bit_sequence_signed-1, up=self.L)
         h_t = self.gaussianLPF()
         # convolve the gaussian filter with the NRZ sequence
         b_t = np.convolve(h_t, c_t, 'full')
