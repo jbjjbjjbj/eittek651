@@ -28,8 +28,8 @@ print(r)
 print(h)
 
 # Using the diversity scheme and demodulate the signal
-mrc = mrc(r, h)
-my_demodulate = my_pam.demodulate(mrc)
+recv = mrc(r, h)
+my_demodulate = my_pam.demodulate(recv)
 print(my_demodulate)
 
 if np.array_equal(my_demodulate, my_symbols):

@@ -26,8 +26,8 @@ chnl = channel_models.RayleighAWGNChannel(N, 10)
 r, h = chnl.run(modulated_symbols)
 
 # Using the diversity scheme and demodulate the signal
-egc = egc(r)
-my_demodulate = my_pam.demodulate(egc)
+recv = egc(r)
+my_demodulate = my_pam.demodulate(recv)
 print(my_demodulate)
 
 if np.array_equal(my_demodulate, my_symbols):

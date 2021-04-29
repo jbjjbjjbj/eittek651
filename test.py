@@ -7,6 +7,7 @@ import pkgutil
 import unittest
 
 import antenna_diversity
+from mypy import api
 
 
 def load_tests(loader, tests, pattern):
@@ -23,5 +24,9 @@ def load_tests(loader, tests, pattern):
 
 
 if __name__ == "__main__":
+    print("Running mypy")
+    print(api.run(["antenna_diversity", "examples"])[0])
+
+    print("Running unittest")
     unittest.main()
 
