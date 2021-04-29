@@ -12,14 +12,14 @@ from ..common import db_to_power
 # - was in doubt about how it worked..... - Mikkel
 
 
-def AWGN(nrElementOut, snr: float) -> np.ndarray:
+def awgn(nrElementOut, snr: float) -> np.ndarray:
     sigma = math.sqrt((1 / db_to_power(snr)) * 1 / 2)
     W = np.random.standard_normal(size=nrElementOut) * sigma + \
         1j * np.random.standard_normal(size=nrElementOut) * sigma
     return W
 
 
-def AWGN_Matrix(rows: int, columns: int, snr: float) -> np.ndarray:
+def awgn_matrix(rows: int, columns: int, snr: float) -> np.ndarray:
     """
         Takes in number of rows and columns
         returns a matrix with size: rows x columns with complex normal

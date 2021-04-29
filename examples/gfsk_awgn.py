@@ -15,7 +15,7 @@ errorBar = 100
 def run_gfsk_simulation(snr):
     u = np.random.randint(2, size=chunkSize)
     s = gfsk.modulate(u)
-    w = channel.noise.AWGN(len(s), snr=snr)
+    w = channel.noise.awgn(len(s), snr=snr)
     r = s+w
     hat_U = gfsk.demodulate(r)
     wrong, n = modulation.runner.Runner.count_symbol_errors(u, hat_U)

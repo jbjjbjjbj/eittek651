@@ -1,7 +1,7 @@
 # Copyright 2021 Christian Schneider Pedersen <cspe18@student.aau.dk>, Helene Bach Vistisen, Julian Teule, Mikkel Filt Bengtson, Victor Büttner <beer@0x23.dk>
 #
 # SPDX-License-Identifier: Beerware OR MIT
-from .noise import AWGN, AWGN_Matrix
+from .noise import awgn, awgn_matrix
 from .fading import rayleigh
 import numpy as np
 import math
@@ -40,7 +40,7 @@ class RayleighAWGNChannel:
             The channel is a Rayleigh distributed and AWGN i.e.
             y = h*x+n
         """
-        noise = AWGN_Matrix(self.N, len(signal), self.snr)
+        noise = awgn_matrix(self.N, len(signal), self.snr)
 
         # makes the outer product between the h vector and the signal vector
         h_times_signal = np.outer(self.h, signal)
@@ -72,6 +72,6 @@ class RayleighAWGNChannel:
 def rayleigh_awgn(x, snr):
     n = len(x)
     alpha = rayleigh(n)
-    W = AWGN(n, snr)
+    W = awgn(n, snr)
     y = alpha * x + W
     return y

@@ -43,7 +43,7 @@ class Runner:
         symbols = self.symbolenc.encode_msb(data)
         moded = self.modulator.modulate(symbols)
 
-        received = moded + channel.AWGN(len(moded), snr)
+        received = moded + channel.awgn(len(moded), snr)
 
         symbols_hat = self.modulator.demodulate(received)
         data_hat = self.symbolenc.decode_msb(symbols_hat)
