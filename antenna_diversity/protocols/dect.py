@@ -148,20 +148,24 @@ class Full():
         The N in N-bit X-CRC should depend on the modulation level.
         See https://www.zlib.net/crc_v3.txt for implementation details.
         """
-        # Calculations are done in the MSB 8 bit, and bytes are shifted in
-        # from the msb.
         crc = 0;
         for byte in data:
-            crc |= byte
-            for _ in range(8):
-                crc = crc << 1
+            crc = x_crc_lookup[crc ^ byte]
 
-                if (((crc & 0x1000) >> 4) ^ (crc & 0x0100)) & 0x0100:
-                    crc |= 0x0100;
-                else:
-                    crc &= ~0x0100;
+        return ((int(crc) >> 4) & 0x000F)
 
-        return ((crc >> 8) & 0x000F);
+
+def gen_x_crc_lookup_at(crc: int):
+    for _ in range(4):
+        crc = crc << 1
+
+        if (crc & 0x0100) > 0:
+            crc ^= 0x0010
+    return crc & 0xFF
+
+x_crc_lookup = np.empty(0xFF + 1, dtype=np.uint16)
+for i in range(0xFF):
+    x_crc_lookup[i] = gen_x_crc_lookup_at(i)
 
 
 def prepare_test_bytes(b_field: bytes) -> bytes:
