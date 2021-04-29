@@ -8,6 +8,5 @@ mypy
 pylint
 flake8
 crccheck
-bitarray
 snakeviz
 h5py
