@@ -9,6 +9,7 @@ slot_per_frame = 1
 
 gfsk = modulation.GFSK()
 
+# Make a frame constructed of how many bits there is per slot, and how many slots there is per frame
 def makeFrameArray():
     frameArray = np.empty(shape=(slot_per_frame,bits_per_slot))
     for i in range(slot_per_frame):
@@ -22,11 +23,14 @@ prob = np.empty(shape=(len(branches), len(snr)))
 
 
 for j, branch in enumerate(branches):
+    # tries is the number of runs
     tries = 1000
     for i, gamma in enumerate(snr):
+        # create channel with the curretn branch and snr
         ch = channel.RayleighAWGNChannel(N = branch, snr = gamma)
         errors = 0
         numberOfTries = 0
+        # make it run extra tries if the snr is bigger then zero
         if gamma > 0:
             tries += 100
         for k in range(tries):
