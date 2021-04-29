@@ -1,4 +1,3 @@
-
 import numpy as np
 import ad_path
 from antenna_diversity import modulation, channel, diversity_technique
@@ -25,7 +24,7 @@ prob = np.empty(shape=(len(branches), len(snr)))
 
 
 for j, branch in enumerate(branches):
-    tries = 1000
+    tries = 100
     for i, gamma in enumerate(snr):
         ch = channel.RayleighAWGNChannel(N = branch, snr = gamma)
         errors = 0
@@ -37,7 +36,7 @@ for j, branch in enumerate(branches):
             for slot in fram:
                 signal = gfsk.modulate(slot)
                 recieved, h = ch.run(signal)
-                hat_recieved = diversity_technique.combining.egc(recieved)
+                hat_recieved = diversity_technique.combining.mrc(recieved, h)
                 hat_slot = gfsk.demodulate(hat_recieved)
                 err, n = modulation.Runner.count_symbol_errors(slot, hat_slot)
                 errors += err
@@ -50,10 +49,10 @@ for j, branch in enumerate(branches):
 for i, branch in enumerate(branches):
     plt.plot(snr, prob[i])
 
-with h5py.File("EGC.h5", "w") as f:
+with h5py.File("Selection.h5", "w") as f:
     f.create_dataset("probs", data=prob)
     f.create_dataset("snrs", data=snr)
 
 
 plt.yscale('log')
-plt.savefig('Egc_diversity_grah')
+plt.savefig('Selection_diversity_graph')
