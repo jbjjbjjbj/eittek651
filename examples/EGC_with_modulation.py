@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Beerware OR MIT
 import ad_path
 from antenna_diversity.channel import channel_models
-from antenna_diversity.diversity_technique import mrc
+from antenna_diversity.diversity_technique import egc
 from antenna_diversity.encoding import SymbolEncoder
 from antenna_diversity import modulation
 import numpy as np
@@ -19,17 +19,15 @@ dect_packet = dect.Full(payload)
 my_pam = modulation.PSK(2)
 my_symbols = SymbolEncoder(2).encode_msb(dect_packet.to_bytes())
 modulated_symbols = my_pam.modulate(my_symbols)
-N = 2
+N = 3
 
 # Creating the channel with N antennas and 10 snr
 chnl = channel_models.RayleighAWGNChannel(N, 10)
 r, h = chnl.run(modulated_symbols)
-print(r)
-print(h)
 
 # Using the diversity scheme and demodulate the signal
-mrc = mrc(r, h)
-my_demodulate = my_pam.demodulate(mrc)
+egc = egc(r)
+my_demodulate = my_pam.demodulate(egc)
 print(my_demodulate)
 
 if np.array_equal(my_demodulate, my_symbols):
