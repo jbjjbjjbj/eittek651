@@ -31,8 +31,7 @@ for snr in snrs_db:
     rs_and_hss = []
     for i, m in enumerate(modulated):
         rs_and_hss.append(some_channel.run(m))
-        if (i+1) % 6 == 0:
-            some_channel.frame_sent()
+        some_channel.frame_sent()
 
                                                       # god forsaken return tuples
     demodulated = [modulator.demodulate(ad.diversity_technique.selection(r, hs)[0]) \
