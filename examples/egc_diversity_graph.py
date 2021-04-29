@@ -1,4 +1,3 @@
-
 import numpy as np
 import ad_path
 from antenna_diversity import modulation, channel, diversity_technique
@@ -7,8 +6,6 @@ import h5py
 
 bits_per_slot = 440
 slot_per_frame = 1
-error_bar = 1000
-max_tries = 1000
 
 gfsk = modulation.GFSK()
 
