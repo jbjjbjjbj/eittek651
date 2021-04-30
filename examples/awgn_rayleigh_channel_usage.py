@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Beerware OR MIT
 import ad_path
 
-import antenna_diversity.channel as channel
+import antenna_diversity as ad
 import numpy as np
 
 ad_path.nop()
@@ -19,7 +19,7 @@ np.random.seed(0)
 
 # construct a channel object called the channel, with N = 2 branches, SNR
 # 0 [dB]
-channel = channel.RayleighAWGNChannel(N=2, snr=0)
+channel = ad.channel.RayleighAWGNChannel(N=2, snr=0)
 
 # print parameters just to see the other default values
 # the class instantly creates the first channel h parameters
