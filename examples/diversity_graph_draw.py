@@ -14,6 +14,7 @@ for fname in Path.cwd().iterdir():
         name = match.groups(0)[0]
         data_files.append((fname, name))
 
+# Get user settings
 print("Found data files:")
 for i, (_, name) in enumerate(data_files):
     print(f"  {i}: {name}")
@@ -27,6 +28,8 @@ output = input(f"Where to save (leave empty for {output_default}): ")
 if output == "":
     output = output_default
 
+
+# Load each data thing and plot it
 for choise in choises:
     fname, name = data_files[choise]
     print(f"Loading file {fname}")
@@ -36,6 +39,8 @@ for choise in choises:
 
     branches = len(prob)
     print(f"Found {branches} branches")
+
+    # If there are no branches we should only include the name in the legend
     if branches == 1:
         label = [name]
     else:
