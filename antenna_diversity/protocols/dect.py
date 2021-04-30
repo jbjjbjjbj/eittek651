@@ -4,7 +4,6 @@
 import struct
 import numpy as np
 from crccheck import crc
-from bitarray import bitarray
 
 
 # R-CRC
