@@ -6,8 +6,6 @@ import h5py
 
 bits_per_slot = 440
 slot_per_frame = 1
-error_bar = 1000
-max_tries = 1000
 
 gfsk = modulation.GFSK()
 
@@ -19,11 +17,11 @@ def make_frame_array():
     return frameArray
 
 
-snr = np.arange(-10, 17.5, 2.5)
+snr = np.arange(-10, 22.5, 2.5)
 
 branches = np.arange(1, 6, 1)
 prob = np.empty(shape=(len(branches), len(snr)))
-base_tries = 1000
+base_tries = 5000
 
 for j, branch in enumerate(branches):
     tries = base_tries
@@ -32,7 +30,7 @@ for j, branch in enumerate(branches):
         errors = 0
         numberOfTries = 0
         if gamma > 0:
-            tries += 100
+            tries += 1000
         for k in range(tries):
             fram = make_frame_array()
             for slot in fram:
@@ -47,14 +45,31 @@ for j, branch in enumerate(branches):
         prob[j][i] = errors / numberOfTries
         print('snr', gamma, 'branch', branch, 'Prob:', prob[j][i])
 
+legends = []
 
 for i, branch in enumerate(branches):
     plt.plot(snr, prob[i])
+    s = 'N = '
+    s += str(branch)
+    legends.append(s)
 
 with h5py.File("diversity_mrc.h5", "w") as f:
     f.create_dataset("probs", data=prob)
     f.create_dataset("snrs", data=snr)
 
+
+plt.legend(legends)
+plt.yscale('log')
+plt.xlabel('SNR [dB]')
+plt.ylabel('Bit Error Rate')
+plt.grid(True)
+# format axis to bigger to bigger font
+plt.rc('font', size=20)  # controls default text size
+plt.rc('axes', titlesize=20)  # fontsize of the title
+plt.rc('axes', labelsize=20)  # fontsize of the x and y labels
+plt.rc('xtick', labelsize=20)  # fontsize of the x tick labels
+plt.rc('ytick', labelsize=20)  # fontsize of the y tick labels
+plt.rc('legend', fontsize=20)  # fontsize of the legend
 
 plt.yscale('log')
 plt.savefig('diversity_mrc.pdf')

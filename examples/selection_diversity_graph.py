@@ -24,7 +24,7 @@ snr = np.arange(-10, 17.5, 2.5)
 
 branches = np.arange(1, 6, 1)
 prob = np.empty(shape=(len(branches), len(snr)))
-base_tries = 1000
+base_tries = 5000
 
 for j, branch in enumerate(branches):
     # tries is the number of runs
@@ -36,7 +36,7 @@ for j, branch in enumerate(branches):
         numberOfTries = 0
         # make it run extra tries if the snr is bigger then zero
         if gamma > 0:
-            tries += 100
+            tries += 1000
         for k in range(tries):
             fram = make_frame_array()
             for slot in fram:
@@ -52,13 +52,29 @@ for j, branch in enumerate(branches):
         print('snr', gamma, 'branch', branch, 'Prob:', prob[j][i])
 
 
+legends = []
+
 for i, branch in enumerate(branches):
     plt.plot(snr, prob[i])
+    s = 'N = '
+    s += str(branch)
+    legends.append(s)
 
 with h5py.File("diversity_selection.h5", "w") as f:
     f.create_dataset("probs", data=prob)
     f.create_dataset("snrs", data=snr)
 
-
+plt.legend(legends)
 plt.yscale('log')
+plt.xlabel('SNR [dB]')
+plt.ylabel('Bit Error Rate')
+plt.grid(True)
+# format axis to bigger to bigger font
+plt.rc('font', size=20)  # controls default text size
+plt.rc('axes', titlesize=20)  # fontsize of the title
+plt.rc('axes', labelsize=20)  # fontsize of the x and y labels
+plt.rc('xtick', labelsize=20)  # fontsize of the x tick labels
+plt.rc('ytick', labelsize=20)  # fontsize of the y tick labels
+plt.rc('legend', fontsize=20)  # fontsize of the legend
+
 plt.savefig('diversity_selection.pdf')
