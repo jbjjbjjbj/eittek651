@@ -51,10 +51,10 @@ for j, branch in enumerate(branches):
 for i, branch in enumerate(branches):
     plt.plot(snr, prob[i])
 
-with h5py.File("Selection.h5", "w") as f:
+with h5py.File("diversity_selection.h5", "w") as f:
     f.create_dataset("probs", data=prob)
     f.create_dataset("snrs", data=snr)
 
 
 plt.yscale('log')
-plt.savefig('Selection_diversity_graph')
+plt.savefig('diversity_selection.pdf')

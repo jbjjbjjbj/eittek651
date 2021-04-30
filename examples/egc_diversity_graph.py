@@ -51,10 +51,10 @@ for j, branch in enumerate(branches):
 for i, branch in enumerate(branches):
     plt.plot(snr, prob[i])
 
-with h5py.File("EGC.h5", "w") as f:
+with h5py.File("diversity_egc.h5", "w") as f:
     f.create_dataset("probs", data=prob)
     f.create_dataset("snrs", data=snr)
 
 
 plt.yscale('log')
-plt.savefig('Egc_diversity_grah')
+plt.savefig('diversity_egc.pdf')
