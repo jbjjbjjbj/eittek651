@@ -4,9 +4,9 @@
 import numpy as np
 import pandas as pd
 
+import antenna_diversity as ad
 import ad_path
 ad_path.nop()
-import antenna_diversity as ad
 
 nr_packets = 1000
 snrs_db = np.arange(-5, 11, 1)
@@ -51,7 +51,7 @@ for snr in snrs_db:
     packet_bers = []
     for i in range(ad.common.shared_length(packets_bytes, received_packets_bytes)):
 
-        faults, total = ad.modulation.Runner.count_bit_errors(packets_bytes[i],
+        faults, total = ad.common.count_bit_errors(packets_bytes[i],
                                                               received_packets_bytes[i])
         packet_bers.append(faults/total)
 
