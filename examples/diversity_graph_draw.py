@@ -53,7 +53,7 @@ legends = []
 # TODO hmm we are limited by the number of line styles, that is stupid
 for i, b in enumerate(sel_branches):
     plt.plot(snr, prob[b])
-    legends.append(f"N = {b}")
+    legends.append(f"N = {b+1}")
 
 print(legends)
 
