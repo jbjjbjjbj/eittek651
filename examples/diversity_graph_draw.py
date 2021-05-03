@@ -28,6 +28,10 @@ for i, (_, name) in enumerate(data_files):
 choise_str = input("Select by numbers (use space for seperation): ")
 choises = [int(s) for s in choise_str.split(" ")]
 
+sel_branches_str = input("Select the wanted branches \
+(use space for seperation): ")
+sel_branches = [int(s) for s in sel_branches_str.split(" ")]
+
 title = input("Write a nice title for the graph(leave empty if unwanted): ")
 
 output = input(f"Where to save (leave empty for {output_default}): ")
@@ -47,15 +51,15 @@ for color_i, choise in enumerate(choises):
     print(f"Found {branches} branches")
 
     # If there are no branches we should only include the name in the legend
-    if branches == 1:
+    if len(sel_branches) == 1:
         label = [name]
     else:
-        label = [f"Branch {i+1}({name})" for i in range(branches)]
+        label = [f"Branch {i+1}({name})" for i in sel_branches]
 
     # TODO hmm we are limited by the number of line styles, that is stupid
-    for i in range(min(branches, len(styles))):
-        plt.plot(snr, prob[i], label=label[i], linestyle=styles[i],
-                 color=colors[color_i])
+    for i, b in enumerate(sel_branches):
+        plt.plot(snr, prob[b], label=label[i], linestyle=styles[i],
+                 color=colors[color_i], lw=1)
 
 plt.yscale("log")
 plt.ylabel("Symbol Error Probability")
