@@ -33,18 +33,18 @@ class TestFull(unittest.TestCase):
         self.assertEqual(a.b_field, self.input)
 
     def test_check_xz_crc(self):
-        self.assertTrue(dect.Full.from_bytes(self.dect_packet).xz_crc_no_error_detected())
+        self.assertFalse(dect.Full.from_bytes(self.dect_packet).xz_crc_error_detected())
 
         b = bytearray(self.dect_packet)
         b[-1] = 0
-        self.assertFalse(dect.Full.from_bytes(bytes(b)).xz_crc_no_error_detected())
+        self.assertTrue(dect.Full.from_bytes(bytes(b)).xz_crc_error_detected())
 
     def test_check_a_crc(self):
-        self.assertTrue(dect.Full(self.input).a_crc_no_error_detected())
+        self.assertFalse(dect.Full(self.input).a_crc_error_detected())
 
         b = bytearray(self.dect_packet)
         b[7] = 0
-        self.assertFalse(dect.Full.from_bytes(bytes(b)).a_crc_no_error_detected())
+        self.assertTrue(dect.Full.from_bytes(bytes(b)).a_crc_error_detected())
 
     def test_check_payload_len(self):
         with self.assertRaisesRegex(Exception, "payload is not 40 long"):

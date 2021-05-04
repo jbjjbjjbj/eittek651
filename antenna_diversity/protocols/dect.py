@@ -130,17 +130,17 @@ class Full():
                            self.xz_field,
                            )
 
-    def a_crc_no_error_detected(self) -> bool:
+    def a_crc_error_detected(self) -> bool:
         """
-        Checks if the CRC in the A-field in the packet is equivalent to a new CRC calculation.
+        Checks if the CRC in the A-field in the packet is unequal to a new CRC calculation.
         """
-        return self.calculate_a_crc_field() == self.a_crc
+        return self.calculate_a_crc_field() != self.a_crc
 
-    def xz_crc_no_error_detected(self) -> bool:
+    def xz_crc_error_detected(self) -> bool:
         """
-        Checks if the X-CRC and Z-CRC (copies) in the packet is equivalent to a new CRC calculation.
+        Checks if the X-CRC and Z-CRC (copies) in the packet is unequal to a new CRC calculation.
         """
-        return self.calculate_xz_crc_field() == self.xz_field
+        return self.calculate_xz_crc_field() != self.xz_field
 
     @staticmethod
     def x_crc_4_bit(data: bytes) -> int:
