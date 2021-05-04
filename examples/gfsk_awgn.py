@@ -1,6 +1,6 @@
 import numpy as np
 import ad_path
-from antenna_diversity import modulation, channel
+from antenna_diversity import modulation, channel, common
 import matplotlib.pyplot as plt
 import h5py
 import sys
@@ -19,7 +19,7 @@ def run_gfsk_simulation(snr):
     w = channel.noise.awgn(len(s), snr=snr)
     r = s+w
     hat_U = gfsk.demodulate(r)
-    wrong, n = modulation.runner.Runner.count_symbol_errors(u, hat_U)
+    wrong, n = common.count_symbol_errors(u, hat_U)
     return wrong, n
 
 

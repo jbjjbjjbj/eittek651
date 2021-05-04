@@ -12,10 +12,6 @@ import time
 import pandas as pd
 
 
-bit_count_lookup = np.empty(256, dtype=int)
-for i in range(256):
-    bit_count_lookup[i] = common.count_bits(i)
-
 
 class Runner:
     """
@@ -49,10 +45,10 @@ class Runner:
         data_hat = self.symbolenc.decode_msb(symbols_hat)
 
         self.bit_stats += np.array(
-                self.count_symbol_errors(symbols, symbols_hat)
+                common.count_symbol_errors(symbols, symbols_hat)
                 )
         self.sym_stats += np.array(
-                self.count_bit_errors(data, data_hat)
+                common.count_bit_errors(data, data_hat)
                 )
 
     def run_until_faults(self, target: int, snr: float) -> None:
@@ -126,29 +122,3 @@ class Runner:
                     ylabel="Symbol Error Rate")
         fig.tight_layout()
         return fig
-
-    @staticmethod
-    def count_bit_errors(a: bytes, b: bytes) -> t.Tuple[int, int]:
-        a_np = np.frombuffer(a, dtype=np.ubyte)
-        b_np = np.frombuffer(b, dtype=np.ubyte)
-
-        n = common.shared_length(a_np, b_np)
-
-        total_bits = n * 8
-
-        difference = np.bitwise_xor(a_np, b_np)
-        counts = bit_count_lookup[difference]
-        wrong_bits = np.sum(counts)
-
-        return wrong_bits, total_bits
-
-    @staticmethod
-    def count_symbol_errors(a: np.ndarray, b: np.ndarray) \
-            -> t.Tuple[int, int]:
-
-        n = common.shared_length(a, b)
-
-        wrong = np.sum(a != b)
-
-        return wrong, n
-
