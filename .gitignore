@@ -7,3 +7,5 @@ local.py
 constellation.png
 out.png
 *.h5
+*.png
+*.pdf
