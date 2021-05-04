@@ -3,6 +3,7 @@ import numpy as np
 import re
 import h5py
 import matplotlib.pyplot as plt
+import typing as t
 
 diversity_file_re = re.compile("diversity_(.*)\\.h5$")
 output_default = "diversity_all.pdf"
@@ -12,7 +13,7 @@ data_files = []
 for fname in Path.cwd().iterdir():
     match = diversity_file_re.search(str(fname))
     if match is not None:
-        name = match.groups(0)[0]
+        name = match.group(1)
         data_files.append((fname, name))
 
 # Get user settings
@@ -25,10 +26,9 @@ choise = int(choise_str)
 
 sel_branches_str = input("Select the wanted branches \
 (use space for seperation, nothing for all): ")
+sel_branches: t.Optional[t.List[int]] = None
 if sel_branches_str != "":
     sel_branches = [int(s) for s in sel_branches_str.split(" ")]
-else:
-    sel_branches = None
 
 title = input("Write a nice title for the graph(leave empty if unwanted): ")
 
@@ -47,7 +47,7 @@ branches = len(prob)
 print(f"Found {branches} branches")
 
 if sel_branches is None:
-    sel_branches = range(branches)
+    sel_branches = list(range(branches))
 
 legends = []
 
