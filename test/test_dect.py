@@ -11,61 +11,58 @@ class TestFull(unittest.TestCase):
     Test full slot
     """
     def setUp(self):
-        self.input = b'0123456789012345678901234567890123456789'
-        self.dect_packet = b'\xaa\xaa\xff\xff\xff\xff\xff\xaa\xaa\xaa\xaa' + \
+        self.payload = b'0123456789012345678901234567890123456789'
+        self.packet_bytes = b'\xaa\xaa\xff\xff\xff\xff\xff\xaa\xaa\xaa\xaa' + \
             b'\xaa_=0123456789012345678901234567890123456789\x11'
+        self.packet = dect.Full(self.payload)
 
-    def test_payload_presence(self):
-        a = dect.Full(self.input)
-        self.assertEqual(a.payload, a.b_field, self.input)
+        self.mutable_bytes = bytearray(self.packet_bytes)
+        self.mutated_bytes = self.mutable_bytes
+        self.mutated_bytes[-1] = 0
+        self.mutated_bytes[7] = 0
+        self.mutated_packet = dect.Full.from_bytes(self.mutated_bytes)
 
-    def test_create_full(self):
-        a = dect.Full(self.input)
-
-        self.assertEqual(a.xz_field, 17)
-        self.assertEqual(a.b_field, self.input)
-
-        self.assertEqual(a.to_bytes(), self.dect_packet)
+    def test_from_payload(self):
+        self.assertEqual(self.packet.xz_field, 17)
+        self.assertEqual(self.packet.b_field, self.payload)
+        self.assertEqual(self.packet.to_bytes(), self.packet_bytes)
 
     def test_from_bytes(self):
-        a = dect.Full.from_bytes(self.dect_packet)
-        self.assertEqual(a.xz_field, 17)
-        self.assertEqual(a.b_field, self.input)
+        packet_from_bytes = dect.Full.from_bytes(self.packet_bytes)
+        self.assertEqual(self.packet.to_bytes(), packet_from_bytes.to_bytes())
 
     def test_check_xz_crc(self):
-        self.assertFalse(dect.Full.from_bytes(self.dect_packet).xz_crc_error_detected())
+        self.assertFalse(self.packet.xz_crc_error_detected())
+        self.assertTrue(self.mutated_packet.xz_crc_error_detected())
 
-        b = bytearray(self.dect_packet)
-        b[-1] = 0
-        self.assertTrue(dect.Full.from_bytes(bytes(b)).xz_crc_error_detected())
+    def test_x_and_z_crc_mutated_z(self):
+        mutated_xz = self.packet.xz_field & 0xFA
+        self.packet.xz_field = mutated_xz
+        self.assertTrue(self.packet.z_crc_error_detected())
+        self.assertFalse(self.packet.x_crc_error_detected())
 
-    def test_x_crc(self):
-        self.assertFalse(dect.Full.from_bytes(self.dect_packet).x_crc_error_detected())
+    def test_x_and_z_crc_mutated_x(self):
+        mutated_xz = self.packet.xz_field & 0xAF
+        self.packet.xz_field = mutated_xz
+        self.assertTrue(self.packet.z_crc_error_detected())
+        self.assertTrue(self.packet.x_crc_error_detected())
 
-        b = bytearray(self.dect_packet)
-        b[-1] = 0
-        self.assertTrue(dect.Full.from_bytes(bytes(b)).x_crc_error_detected())
-
-    def test_z_crc(self):
-        self.assertFalse(dect.Full.from_bytes(self.dect_packet).z_crc_error_detected())
-
-        b = bytearray(self.dect_packet)
-        b[-1] = 0
-        self.assertTrue(dect.Full.from_bytes(bytes(b)).z_crc_error_detected())
+    def test_x_and_z_crc_mutated_payload(self):
+        mutated_payload = [0x00] * 40
+        self.packet.b_field = bytes(mutated_payload)
+        self.assertTrue(self.packet.x_crc_error_detected())
+        self.assertFalse(self.packet.z_crc_error_detected())
 
     def test_check_a_crc(self):
-        self.assertFalse(dect.Full(self.input).a_field_crc_error_detected())
-
-        b = bytearray(self.dect_packet)
-        b[7] = 0
-        self.assertTrue(dect.Full.from_bytes(bytes(b)).a_field_crc_error_detected())
+        self.assertFalse(self.packet.a_field_crc_error_detected())
+        self.assertTrue(self.mutated_packet.a_field_crc_error_detected())
 
     def test_check_payload_len(self):
         with self.assertRaisesRegex(Exception, "payload is not 40 long"):
             dect.Full(b'hej')
 
     def test_invalid_bytes(self):
-        byts = bytearray(self.dect_packet)[:20]
+        byts = self.mutable_bytes[:20]
         with self.assertRaisesRegex(Exception,
                                     "bytes are not 55 long"):
             dect.Full.from_bytes(byts)
@@ -82,9 +79,8 @@ class TestFull(unittest.TestCase):
                 data.append(bytes.fromhex(dat))
                 expected.append(int(val))
 
-        a = dect.Full(self.input)
         for i in range(common.shared_length(data, expected)):
-            self.assertEqual(expected[i], a.x_crc_4_bit(data[i]))
+            self.assertEqual(expected[i], self.packet.x_crc_4_bit(data[i]))
 
     def test_get_random(self):
         dect.Full.with_random_payload()  # We have no known good so this is just run

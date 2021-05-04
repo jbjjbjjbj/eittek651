@@ -73,8 +73,6 @@ class Full():
             self.a_header, self.a_tail, self.a_crc = \
                 struct.unpack(self.a_field_format, a_field)
 
-        self.payload = self.b_field  # easy to remember alias
-
     @classmethod
     def from_bytes(cls, raw_packet: bytes):  # Not sure about types
         """
@@ -147,16 +145,17 @@ class Full():
         Checks if the X-CRC in the packet is unequal to a new CRC calculation.
         """
         # hacky but don't wanna implement seperate X-CRC and Z-CRC calcs atm.
+        x_crc = self.xz_field >> 4
         new_x_crc = self.calculate_xz_crc_field() >> 4
-        return new_x_crc != (self.xz_field >> 4)
+        return x_crc != new_x_crc
 
     def z_crc_error_detected(self) -> bool:
         """
-        Checks if the Z-CRC in the packet is unequal to a new CRC calculation.
+        Checks if the Z-CRC in the packet is identical to the X-CRC
         """
-        # hacky but don't wanna implement seperate X-CRC and Z-CRC calcs atm.
-        new_z_crc = self.calculate_xz_crc_field() << 4
-        return new_z_crc != (self.xz_field << 4)
+        x_crc = self.xz_field >> 4
+        z_crc = self.xz_field & 0x0F
+        return z_crc != x_crc
 
     @staticmethod
     def x_crc_4_bit(data: bytes) -> int:
