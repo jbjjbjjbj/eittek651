@@ -45,10 +45,10 @@ class Runner:
         data_hat = self.symbolenc.decode_msb(symbols_hat)
 
         self.bit_stats += np.array(
-                self.count_symbol_errors(symbols, symbols_hat)
+                common.count_symbol_errors(symbols, symbols_hat)
                 )
         self.sym_stats += np.array(
-                self.count_bit_errors(data, data_hat)
+                common.count_bit_errors(data, data_hat)
                 )
 
     def run_until_faults(self, target: int, snr: float) -> None:
@@ -122,12 +122,3 @@ class Runner:
                     ylabel="Symbol Error Rate")
         fig.tight_layout()
         return fig
-
-    @staticmethod
-    def count_bit_errors(a: bytes, b: bytes) -> t.Tuple[int, int]:
-        return common.count_bit_errors(a, b)
-
-    @staticmethod
-    def count_symbol_errors(a: np.ndarray, b: np.ndarray) \
-            -> t.Tuple[int, int]:
-        return common.count_symbol_errors(a, b)
