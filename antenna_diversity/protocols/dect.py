@@ -85,7 +85,7 @@ class Full():
         return cls(raw_packet, from_payload=False)
 
     @classmethod
-    def get_random(cls):  # Not sure about types
+    def with_random_payload(cls):  # Not sure about types
         """
         Returns a packet with random payload.
         """

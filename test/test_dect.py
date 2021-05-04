@@ -73,4 +73,4 @@ class TestFull(unittest.TestCase):
             self.assertEqual(expected[i], a.x_crc_4_bit(data[i]))
 
     def test_get_random(self):
-        dect.Full.get_random()  # We have no known good so this is just run
+        dect.Full.with_random_payload()  # We have no known good so this is just run

@@ -16,7 +16,7 @@ bers = []
 nr_overlooked_errors = []
 for snr in snrs_db:
     print(f"Starting run for SNR {snr}")
-    packets = [ad.protocols.dect.Full.get_random() for _ in range(nr_packets)]
+    packets = [ad.protocols.dect.Full.with_random_payload() for _ in range(nr_packets)]
     packets_bytes = [p.to_bytes() for p in packets]
 
     modulator = ad.modulation.GFSK()
