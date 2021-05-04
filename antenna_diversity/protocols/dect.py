@@ -142,6 +142,22 @@ class Full():
         """
         return self.calculate_xz_crc_field() != self.xz_field
 
+    def x_crc_error_detected(self) -> bool:
+        """
+        Checks if the X-CRC in the packet is unequal to a new CRC calculation.
+        """
+        # hacky but don't wanna implement seperate X-CRC and Z-CRC calcs atm.
+        new_x_crc = self.calculate_xz_crc_field() >> 4
+        return new_x_crc != (self.xz_field >> 4)
+
+    def z_crc_error_detected(self) -> bool:
+        """
+        Checks if the Z-CRC in the packet is unequal to a new CRC calculation.
+        """
+        # hacky but don't wanna implement seperate X-CRC and Z-CRC calcs atm.
+        new_z_crc = self.calculate_xz_crc_field() << 4
+        return new_z_crc != (self.xz_field << 4)
+
     @staticmethod
     def x_crc_4_bit(data: bytes) -> int:
         """
