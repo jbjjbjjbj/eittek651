@@ -130,7 +130,7 @@ class Full():
                            self.xz_field,
                            )
 
-    def a_crc_error_detected(self) -> bool:
+    def a_field_crc_error_detected(self) -> bool:
         """
         Checks if the CRC in the A-field in the packet is unequal to a new CRC calculation.
         """

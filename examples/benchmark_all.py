@@ -43,7 +43,7 @@ def run_sim() -> bool:
     chnl.frame_sent()
 
     # Check it
-    return dect.Full.from_bytes(data_hat).a_crc_error_detected()
+    return dect.Full.from_bytes(data_hat).a_field_crc_error_detected()
 
 
 num_packets = 10000

@@ -54,11 +54,11 @@ class TestFull(unittest.TestCase):
         self.assertTrue(dect.Full.from_bytes(bytes(b)).z_crc_error_detected())
 
     def test_check_a_crc(self):
-        self.assertFalse(dect.Full(self.input).a_crc_error_detected())
+        self.assertFalse(dect.Full(self.input).a_field_crc_error_detected())
 
         b = bytearray(self.dect_packet)
         b[7] = 0
-        self.assertTrue(dect.Full.from_bytes(bytes(b)).a_crc_error_detected())
+        self.assertTrue(dect.Full.from_bytes(bytes(b)).a_field_crc_error_detected())
 
     def test_check_payload_len(self):
         with self.assertRaisesRegex(Exception, "payload is not 40 long"):

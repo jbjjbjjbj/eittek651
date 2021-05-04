@@ -40,7 +40,7 @@ for snr in snrs_db:
     received_packets = [ad.protocols.dect.Full.from_bytes(modem.decode_msb(d)) for d in demodulated]
     received_packets_bytes = [rp.to_bytes() for rp in received_packets]
 
-    a_crc_checks = [not rp.a_crc_error_detected() for rp in received_packets]
+    a_crc_checks = [not rp.a_field_crc_error_detected() for rp in received_packets]
     a_crc_error_ratios.append(1-sum(a_crc_checks)/len(a_crc_checks))
 
     xz_crc_checks = [not rp.xz_crc_error_detected() for rp in received_packets]
