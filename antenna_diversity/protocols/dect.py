@@ -73,6 +73,8 @@ class Full():
             self.a_header, self.a_tail, self.a_crc = \
                 struct.unpack(self.a_field_format, a_field)
 
+        self.payload = self.b_field  # easy to remember alias
+
     @classmethod
     def from_bytes(cls, raw_packet: bytes):  # Not sure about types
         """

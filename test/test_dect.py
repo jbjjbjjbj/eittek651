@@ -15,6 +15,10 @@ class TestFull(unittest.TestCase):
         self.dect_packet = b'\xaa\xaa\xff\xff\xff\xff\xff\xaa\xaa\xaa\xaa' + \
             b'\xaa_=0123456789012345678901234567890123456789\x11'
 
+    def test_payload_presence(self):
+        a = dect.Full(self.input)
+        self.assertEqual(a.payload, a.b_field, self.input)
+
     def test_create_full(self):
         a = dect.Full(self.input)
 
