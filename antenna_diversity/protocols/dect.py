@@ -148,20 +148,29 @@ class Full():
         The N in N-bit X-CRC should depend on the modulation level.
         See https://www.zlib.net/crc_v3.txt for implementation details.
         """
-        # Calculations are done in the MSB 8 bit, and bytes are shifted in
-        # from the msb.
-        crc = 0;
+        # All crc operations handle in the first 16 bits of CRC.
+        # These 16 bits are split in 3 parts
+        # - input region masked by 0x00FF: where data to be shiftet in is added
+        # - calculation region masked by 0x0F00: where the poly is xor'ed in
+        # - decision region masked by 0x1000: if bit is set, xor should be done
+        crc = 0
         for byte in data:
+            # Add the byte to the input region
             crc |= byte
             for _ in range(8):
-                crc = crc << 1
+                # Shift a single bit into the calculation region,
+                # Also limit to 16 bits, instead of letting it grow forever
+                crc = (crc << 1) & 0xFFFF
 
-                if (((crc & 0x1000) >> 4) ^ (crc & 0x0100)) & 0x0100:
-                    crc |= 0x0100;
-                else:
-                    crc &= ~0x0100;
+                # Decide on whether to xor, based on if decision bit is set
+                if (crc & 0x1000) > 0:
+                    # Xor with the poly = 1
+                    # The poly is shiftet to place it in the calculation region
+                    crc ^= 0x0100
 
-        return ((crc >> 8) & 0x000F);
+        # Move the calculation region to the LSB, and remote leftover from
+        # calculations
+        return ((crc >> 8) & 0x000F)
 
 
 def prepare_test_bytes(b_field: bytes) -> bytes:
