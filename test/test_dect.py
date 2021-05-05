@@ -1,6 +1,6 @@
 import unittest
 from antenna_diversity.protocols import dect
-import struct
+import copy
 import os
 from pathlib import Path
 from antenna_diversity import common
@@ -17,7 +17,7 @@ class TestFull(unittest.TestCase):
         self.packet = dect.Full(self.payload)
 
         self.mutable_bytes = bytearray(self.packet_bytes)
-        self.mutated_bytes = self.mutable_bytes
+        self.mutated_bytes = copy.copy(self.mutable_bytes)
         self.mutated_bytes[-1] = 0
         self.mutated_bytes[7] = 0
         self.mutated_packet = dect.Full.from_bytes(self.mutated_bytes)
@@ -36,13 +36,13 @@ class TestFull(unittest.TestCase):
         self.assertTrue(self.mutated_packet.xz_crc_error_detected())
 
     def test_x_and_z_crc_mutated_z(self):
-        mutated_xz = self.packet.xz_field & 0xFA
+        mutated_xz = self.packet.xz_field ^ 0x05  # 0000 0101
         self.packet.xz_field = mutated_xz
         self.assertTrue(self.packet.z_crc_error_detected())
         self.assertFalse(self.packet.x_crc_error_detected())
 
     def test_x_and_z_crc_mutated_x(self):
-        mutated_xz = self.packet.xz_field & 0xAF
+        mutated_xz = self.packet.xz_field ^ 0x50 # 0101 0000
         self.packet.xz_field = mutated_xz
         self.assertTrue(self.packet.z_crc_error_detected())
         self.assertTrue(self.packet.x_crc_error_detected())
