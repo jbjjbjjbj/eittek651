@@ -42,8 +42,8 @@ for j, branch in enumerate(branches):
             for slot in fram:
                 signal = gfsk.modulate(slot)
                 recieved, h = ch.run(signal)
-                hat_recieved, _ = diversity_technique.selection_from_h(
-                    recieved, h)
+                hat_recieved, _ = diversity_technique.selection_from_power(
+                    recieved)
                 hat_slot = gfsk.demodulate(hat_recieved)
                 err, n = common.count_symbol_errors(slot, hat_slot)
                 errors += err

@@ -39,9 +39,7 @@ for snr in snrs_db:
         # god forsaken return tuples
     demodulated = [
         modulator.demodulate(
-            ad.diversity_technique.selection_from_h(
-                r,
-                hs)[0]) for r,
+            ad.diversity_technique.selection_from_power(r)[0]) for r,
         hs in rs_and_hss]
 
     received_packets = [

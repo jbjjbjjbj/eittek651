@@ -35,7 +35,7 @@ def run_sim() -> bool:
     symbols = enc.encode_msb(data)
     moded = mod.modulate(symbols)
     recv, h = chnl.run(moded)
-    combined, _ = diversity_technique.selection_from_h(recv, h)
+    combined, _ = diversity_technique.selection_from_power(recv)
 
     symbols_hat = mod.demodulate(combined)
     data_hat = enc.decode_msb(symbols_hat)
