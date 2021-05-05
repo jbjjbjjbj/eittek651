@@ -31,6 +31,9 @@ class ConstellationModulator:
         self.constellation = np.array(self.generate_constellation(energy))
 
     def modulate(self, symbols: np.ndarray) -> np.ndarray:
+        if not np.issubdtype(symbols.dtype, np.integer):
+            symbols = symbols.astype(int)
+
         # make d scale mean symbol energy
         encoded = self.encoder.encode(symbols)
         return self.constellation[encoded]
