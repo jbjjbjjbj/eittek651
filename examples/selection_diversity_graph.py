@@ -3,7 +3,7 @@ import ad_path
 from antenna_diversity import modulation, channel, diversity_technique, common
 import matplotlib.pyplot as plt
 import h5py
-import config.ber_over_snr as cfg
+from config import ber_over_snr as cfg
 
 ad_path.nop()
 
