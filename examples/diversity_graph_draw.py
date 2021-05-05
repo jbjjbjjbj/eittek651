@@ -51,10 +51,15 @@ if sel_branches is None:
 
 legends = []
 
+min_snr = np.inf
+max_snr = -np.inf
 # TODO hmm we are limited by the number of line styles, that is stupid
 for i, b in enumerate(sel_branches):
-    plt.plot(snr, prob[b])
+    plt.plot(snr[b], prob[b])
     legends.append(f"N = {b+1}")
+
+    min_snr = min(min(snr[b]), min_snr)
+    max_snr = max(max(snr[b]), max_snr)
 
 print(legends)
 
@@ -63,7 +68,7 @@ plt.yscale("log")
 plt.ylabel("Symbol Error Rate")
 plt.xlabel("SNR [dB]")
 plt.grid(True)
-plt.xticks(np.arange(min(snr), max(snr) + 1, 5.0))
+plt.xticks(np.arange(min_snr, max_snr + 1, 5.0))
 plt.yticks([1e0, 1e-1, 1e-2, 1e-3, 1e-4, 1e-5])
 plt.ylim(1e-5, 1e0)
 # format axis to bigger to bigger font
