@@ -157,6 +157,12 @@ class Full():
         z_crc = self.xz_field & 0x0F
         return z_crc != x_crc
 
+    def any_crc_error_detected(self) -> bool:
+        """
+        Checks if any error is detected by the CRCs.
+        """
+        return self.xz_crc_error_detected() or self.a_field_crc_error_detected()
+
     @staticmethod
     def x_crc_4_bit(data: bytes) -> int:
         """

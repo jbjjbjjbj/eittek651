@@ -42,7 +42,7 @@ class TestFull(unittest.TestCase):
         self.assertFalse(self.packet.x_crc_error_detected())
 
     def test_x_and_z_crc_mutated_x(self):
-        mutated_xz = self.packet.xz_field ^ 0x50 # 0101 0000
+        mutated_xz = self.packet.xz_field ^ 0x50  # 0101 0000
         self.packet.xz_field = mutated_xz
         self.assertTrue(self.packet.z_crc_error_detected())
         self.assertTrue(self.packet.x_crc_error_detected())
@@ -56,6 +56,10 @@ class TestFull(unittest.TestCase):
     def test_check_a_crc(self):
         self.assertFalse(self.packet.a_field_crc_error_detected())
         self.assertTrue(self.mutated_packet.a_field_crc_error_detected())
+
+    def test_any_crc(self):
+        self.assertFalse(self.packet.any_crc_error_detected())
+        self.assertTrue(self.mutated_packet.any_crc_error_detected())
 
     def test_check_payload_len(self):
         with self.assertRaisesRegex(Exception, "payload is not 40 long"):
