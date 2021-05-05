@@ -67,7 +67,7 @@ class GFSK():
         # convolve the gaussian filter with the NRZ sequence
         b_t = np.convolve(h_t, c_t, 'full')
         # normalize the b_t sequence to be between -1 and 1
-        bnorm_t = b_t/abs(b_t).max()
+        bnorm_t = b_t/np.abs(b_t).max()
         # Integrate over the output of the gaussian filter to get phase information
         # using lfilter makes a low pass filter, corresponding to integrating
         phi_t = lfilter(b=[1], a=[1, -1], x=bnorm_t *
