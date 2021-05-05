@@ -1,6 +1,6 @@
 import numpy as np
 import ad_path
-from antenna_diversity import modulation, channel, diversity_technique
+from antenna_diversity import modulation, channel, diversity_technique, common
 import matplotlib.pyplot as plt
 import h5py
 
@@ -44,7 +44,7 @@ for j, branch in enumerate(branches):
                 recieved, h = ch.run(signal)
                 hat_recieved, _ = diversity_technique.selection(recieved, h)
                 hat_slot = gfsk.demodulate(hat_recieved)
-                err, n = modulation.Runner.count_symbol_errors(slot, hat_slot)
+                err, n = common.count_symbol_errors(slot, hat_slot)
                 errors += err
                 numberOfTries += n
             ch.frame_sent()
