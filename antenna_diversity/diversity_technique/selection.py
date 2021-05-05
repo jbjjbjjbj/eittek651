@@ -36,8 +36,8 @@ def selection_from_power(signal_matrix: np.ndarray,
         Signal_matrix is a N x M signal where N is the number of branches and M is the signal places,
         such for example that the signal[1] gives a array of M elements
 
-        This function uses the energy of the signal to choose which branch to use
-        numb_bits is the amount of bits to use for calculating the signal energy
+        This function uses the power of the signal to choose which branch to use
+        numb_bits is the amount of bits to use for calculating the signal power
         over_sample_rate is the oversamplerate used to make the baseband representation in the gfsk module
 
         numb_bits = 4 is set as it is the common number of bits used in physical devices
