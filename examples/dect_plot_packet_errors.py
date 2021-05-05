@@ -4,16 +4,18 @@
 import numpy as np
 import pandas as pd
 
-import antenna_diversity as ad
 import ad_path
 ad_path.nop()
+import antenna_diversity as ad
 
-nr_packets = 1000
-snrs_db = np.arange(-5, 11, 1)
-xz_crc_error_ratios = []
+
+nr_packets = 75
+snrs_db = np.arange(-5, 25, 1)
+x_crc_error_ratios = []
+z_crc_error_ratios = []
 a_crc_error_ratios = []
 bers = []
-nr_overlooked_errors = []
+nr_undetected_errors = []
 for snr in snrs_db:
     print(f"Starting run for SNR {snr}")
     packets = [ad.protocols.dect.Full.with_random_payload() for _ in range(nr_packets)]
@@ -40,13 +42,16 @@ for snr in snrs_db:
     received_packets = [ad.protocols.dect.Full.from_bytes(modem.decode_msb(d)) for d in demodulated]
     received_packets_bytes = [rp.to_bytes() for rp in received_packets]
 
-    a_crc_checks = [not rp.a_field_crc_error_detected() for rp in received_packets]
-    a_crc_error_ratios.append(1-sum(a_crc_checks)/len(a_crc_checks))
+    a_crc_detecteds = [rp.a_field_crc_error_detected() for rp in received_packets]
+    a_crc_error_ratios.append(sum(a_crc_detecteds)/len(a_crc_detecteds))
 
-    xz_crc_checks = [not rp.xz_crc_error_detected() for rp in received_packets]
-    xz_crc_error_ratios.append(1-sum(xz_crc_checks)/len(xz_crc_checks))
+    x_crc_detecteds = [rp.x_crc_error_detected() for rp in received_packets]
+    x_crc_error_ratios.append(sum(x_crc_detecteds)/len(x_crc_detecteds))
 
-    nr_overlooked_error = 0
+    z_crc_error_detecteds = [rp.z_crc_error_detected() for rp in received_packets]
+    z_crc_error_ratios.append(sum(z_crc_error_detecteds)/len(z_crc_error_detecteds))
+
+    nr_undetected_error = 0
     packet_bers = []
     for i in range(ad.common.shared_length(packets_bytes, received_packets_bytes)):
 
@@ -54,21 +59,22 @@ for snr in snrs_db:
                                                               received_packets_bytes[i])
         packet_bers.append(faults/total)
 
-        if (xz_crc_checks[i] is True and a_crc_checks[i] is True and
+        if ((not received_packets[i].any_crc_error_detected()) and
                                          packets_bytes[i] != received_packets_bytes[i]):
-            nr_overlooked_error += 1
+            nr_undetected_error += 1
 
-    nr_overlooked_errors.append(nr_overlooked_error/nr_packets)
+    nr_undetected_errors.append(nr_undetected_error/nr_packets)
     mean_ber = sum(packet_bers)/len(packet_bers)
     bers.append(mean_ber)
 
 
 df = pd.DataFrame(
         index=snrs_db,
-        data={"XZ-CRC Packet Error Detection Ratio": xz_crc_error_ratios,
-              "R-CRC Packet Error Detection Ratio": a_crc_error_ratios,
+        data={"Ratio of Packets with X-CRC Error Detected": x_crc_error_ratios,
+              "Ratio of Packets with R-CRC Error Detected": a_crc_error_ratios,
               f"Mean Bit Error Rate ({nr_packets} packets)": bers,
-              "Ratio of Overlooked Packet Errors by CRCs": nr_overlooked_errors,
+              "Ratio of Undetected Packet Errors": nr_undetected_errors,
+              "Ratio of Packets with Z-CRC Error Detected": z_crc_error_ratios,
               }
         )
 
