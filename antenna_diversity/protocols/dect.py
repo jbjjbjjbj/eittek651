@@ -83,7 +83,7 @@ class Full():
         return cls(raw_packet, from_payload=False)
 
     @classmethod
-    def get_random(cls):  # Not sure about types
+    def with_random_payload(cls):  # Not sure about types
         """
         Returns a packet with random payload.
         """
@@ -128,17 +128,40 @@ class Full():
                            self.xz_field,
                            )
 
-    def check_a_crc_field(self) -> bool:
+    def a_field_crc_error_detected(self) -> bool:
         """
-        Checks if the CRC in the A-field in the packet is equivalent to a new CRC calculation.
+        Checks if the CRC in the A-field in the packet is unequal to a new CRC calculation.
         """
-        return self.calculate_a_crc_field() == self.a_crc
+        return self.calculate_a_crc_field() != self.a_crc
 
-    def check_xz_crc_field(self) -> bool:
+    def xz_crc_error_detected(self) -> bool:
         """
-        Checks if the X-CRC and Z-CRC (copies) in the packet is equivalent to a new CRC calculation.
+        Checks if the X-CRC and Z-CRC (copies) in the packet is unequal to a new CRC calculation.
         """
-        return self.calculate_xz_crc_field() == self.xz_field
+        return self.calculate_xz_crc_field() != self.xz_field
+
+    def x_crc_error_detected(self) -> bool:
+        """
+        Checks if the X-CRC in the packet is unequal to a new CRC calculation.
+        """
+        # hacky but don't wanna implement seperate X-CRC and Z-CRC calcs atm.
+        x_crc = self.xz_field >> 4
+        new_x_crc = self.calculate_xz_crc_field() >> 4
+        return x_crc != new_x_crc
+
+    def z_crc_error_detected(self) -> bool:
+        """
+        Checks if the Z-CRC in the packet is identical to the X-CRC
+        """
+        x_crc = self.xz_field >> 4
+        z_crc = self.xz_field & 0x0F
+        return z_crc != x_crc
+
+    def any_crc_error_detected(self) -> bool:
+        """
+        Checks if any error is detected by the CRCs.
+        """
+        return self.xz_crc_error_detected() or self.a_field_crc_error_detected()
 
     @staticmethod
     def x_crc_4_bit(data: bytes) -> int:

@@ -16,7 +16,7 @@ bers = []
 nr_overlooked_errors = []
 for snr in snrs_db:
     print(f"Starting run for SNR {snr}")
-    packets = [ad.protocols.dect.Full.get_random() for _ in range(nr_packets)]
+    packets = [ad.protocols.dect.Full.with_random_payload() for _ in range(nr_packets)]
     packets_bytes = [p.to_bytes() for p in packets]
 
     modulator = ad.modulation.GFSK()
@@ -40,11 +40,10 @@ for snr in snrs_db:
     received_packets = [ad.protocols.dect.Full.from_bytes(modem.decode_msb(d)) for d in demodulated]
     received_packets_bytes = [rp.to_bytes() for rp in received_packets]
 
-    a_crc_checks = [rp.check_a_crc_field() for rp in received_packets]
+    a_crc_checks = [not rp.a_field_crc_error_detected() for rp in received_packets]
     a_crc_error_ratios.append(1-sum(a_crc_checks)/len(a_crc_checks))
 
-
-    xz_crc_checks = [rp.check_xz_crc_field() for rp in received_packets]
+    xz_crc_checks = [not rp.xz_crc_error_detected() for rp in received_packets]
     xz_crc_error_ratios.append(1-sum(xz_crc_checks)/len(xz_crc_checks))
 
     nr_overlooked_error = 0
