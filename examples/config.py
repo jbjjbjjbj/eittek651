@@ -15,7 +15,7 @@ ber_over_snr = Collection(
     # h values.
     stop_at_errors=100000,
     snr_stop=100,
-    snr_step=2.5,
-    branches=5
+    snr_step=1,
+    branches=10
 )
 
