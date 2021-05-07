@@ -9,11 +9,15 @@ ad_path.nop()
 import antenna_diversity as ad
 
 
+class NoDiversity():
+   def  __init__():
+        pass
+
 crc_fail_penalty = 320  # Payload len
-nr_packets = 200
+nr_packets = 1000
 snrs_db = np.arange(-2, 18, 1)
 dates = {}
-for dt in [ad.diversity_technique.mrc, ad.diversity_technique.egc, ad.diversity_technique.selection]:
+for dt in [NoDiversity, ad.diversity_technique.mrc, ad.diversity_technique.egc, ad.diversity_technique.selection]:
     all_payload_bit_errors = []
     for snr in snrs_db:
         print(f"Starting run for SNR {snr}")
@@ -44,7 +48,9 @@ for dt in [ad.diversity_technique.mrc, ad.diversity_technique.egc, ad.diversity_
                            for r, hs in rs_and_hss]
         elif dt == ad.diversity_technique.egc:
             demodulated = [modulator.demodulate(dt(r)) \
-                           for r, hs in rs_and_hss]
+                           for r, _ in rs_and_hss]
+        elif dt == NoDiversity:
+            demodulated = [modulator.demodulate(r[0]) for r, _ in rs_and_hss]
         else:
             raise Exception(f"Unknown diversity technique, {dt}, can't used")
 
@@ -64,8 +70,9 @@ for dt in [ad.diversity_technique.mrc, ad.diversity_technique.egc, ad.diversity_
                 # https://github.com/jbjjbjjbj/eittek651/issues/39
                 payload_bit_errors += ad.common.count_bit_errors(received_packets[i].b_field,
                                                                  packets[i].b_field)[0]
-        all_payload_bit_errors.append(payload_bit_errors)
-    dates[f'{dt.__name__}'] = all_payload_bit_errors
+        # TODO: rename stuff to mean or avg, since it is divided by nr_packets
+        all_payload_bit_errors.append(payload_bit_errors / nr_packets)
+    dates[f'{dt.__name__} (2 branches)'] = all_payload_bit_errors
 
 
 df = pd.DataFrame(
@@ -74,6 +81,7 @@ df = pd.DataFrame(
         )
 
 
-df.plot(ylabel="Packet Bit Error Score (lower is better)",
-        xlabel="SNR [dB]").get_figure().savefig("lol2.png")
+df.plot(ylabel=f"Payload Bit Error Score ({nr_packets} packets, lower is better)",
+        xlabel="SNR [dB]",
+        title="DECT Full, GFSK, RayleighAWGNChannel").get_figure().savefig("lol2.png")
 
