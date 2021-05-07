@@ -4,4 +4,5 @@
 
 from .combining import mrc
 from .combining import egc
-from .selection import selection
+from .selection import selection_from_h
+from .selection import selection_from_power

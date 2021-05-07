@@ -12,7 +12,7 @@ import time
 
 import ad_path
 from antenna_diversity import modulation, encoding, channel, \
-        diversity_technique
+    diversity_technique
 from antenna_diversity.protocols import dect
 
 ad_path.nop()
@@ -35,7 +35,7 @@ def run_sim() -> bool:
     symbols = enc.encode_msb(data)
     moded = mod.modulate(symbols)
     recv, h = chnl.run(moded)
-    combined, _ = diversity_technique.selection(recv, h)
+    combined, _ = diversity_technique.selection_from_power(recv)
 
     symbols_hat = mod.demodulate(combined)
     data_hat = enc.decode_msb(symbols_hat)
