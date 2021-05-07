@@ -79,30 +79,3 @@ for ty in range(tries):
 plt.plot(ind_1_arr)
 plt.plot(ind_2_arr)
 plt.show()
-
-"""
-for j, branch in enumerate(branches):
-    # tries is the number of runs
-    tries = base_tries
-    for i, gamma in enumerate(snr):
-        # create channel with the curretn branch and snr
-        ch = channel.RayleighAWGNChannel(N=branch, snr=gamma)
-        errors = 0
-        numberOfTries = 0
-        # make it run extra tries if the snr is bigger then zero
-        if gamma > 0:
-            tries += 1000
-        for k in range(tries):
-            fram = make_frame_array()
-            for slot in fram:
-                signal = gfsk.modulate(slot)
-                recieved, h = ch.run(signal)
-                hat_recieved, _ = diversity_technique.selection(recieved, h)
-                hat_slot = gfsk.demodulate(hat_recieved)
-                err, n = modulation.Runner.count_symbol_errors(slot, hat_slot)
-                errors += err
-                numberOfTries += n
-            ch.frame_sent()
-        prob[j][i] = errors / numberOfTries
-        print('snr', gamma, 'branch', branch, 'Prob:', prob[j][i])
-"""
