@@ -69,8 +69,7 @@ for ty in range(tries):
         signal = gfsk.modulate(slot)
         recieved, h = ch.run(signal)
         hat_real_recieved, ind1 = real_selection(recieved)
-        hat_recieved, ind2 = diversity_technique.selection_from_power(
-            recieved, h)
+        hat_recieved, ind2 = diversity_technique.selection_from_power(recieved)
         ind_1_arr[ty] = ind1
         ind_2_arr[ty] = ind2
         hat_slot = gfsk.demodulate(hat_recieved)

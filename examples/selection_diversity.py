@@ -16,7 +16,7 @@ print('x:', x)
 y, index = diversity_technique.selection_from_h(x, h)
 
 # selection from power example
-y1, index1 = diversity_technique.selection_from_power(x, h)
+y1, index1 = diversity_technique.selection_from_power(x)
 
 
 print("y:", y)

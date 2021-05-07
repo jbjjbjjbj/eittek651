@@ -15,7 +15,7 @@ class TestSelection(unittest.TestCase):
 
     def test_from_h_simple(self):
         hs = np.array([-100, 0, 2])
-        chosen = 1
+        chosen = 2
         res, index = selection.selection_from_h(self.signals, hs)
         self.assertEqual(chosen, index)
         np.testing.assert_array_equal(res, self.signals[chosen])
