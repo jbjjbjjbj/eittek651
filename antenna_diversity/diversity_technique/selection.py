@@ -20,11 +20,11 @@ def selection_from_h(signal: np.ndarray,
 def calculate_power(signal_array: np.ndarray, numb_bits, over_sample_rate):
     # first cut out numb_bits of signal_array.
     # the typical physical implementation of selection only uses x number bits
-    # using same deafault of 4 bits, and oversampelrate of 32 as the deafault
+    # using same default of 4 bits, and oversamplerate of 32 as the default
     # for gfsk is set to 32
     # Calculation is from page 160 in wireless communication systems in matlab
     signal_part = signal_array[0: int(numb_bits * over_sample_rate)]
-    signal_abs_sqaured = np.square(np.abs(signal_part))
+    signal_abs_squared = np.square(np.abs(signal_part))
     return 1 / len(signal_part) * np.sum(signal_abs_sqaured)
 
 
