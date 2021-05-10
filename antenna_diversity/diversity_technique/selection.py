@@ -50,3 +50,17 @@ def selection_from_power(signal_matrix: np.ndarray,
 
     index = np.argmax(signal_powers)
     return signal_matrix[index], int(index)
+
+
+class CRCSelection:
+    def __init__(self, branches: int):
+        self.branches = branches
+        self.last_good = True
+        self.selected = 0
+
+    def report_crc_status(self, good: bool):
+        if not good:
+            self.selected = (self.selected + 1) % self.branches
+
+    def select(self, signal_matrix: np.ndarray) -> t.Tuple[np.ndarray, int]:
+        return signal_matrix[self.selected], self.selected

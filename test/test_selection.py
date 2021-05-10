@@ -25,3 +25,27 @@ class TestSelection(unittest.TestCase):
         res, index = selection.selection_from_power(self.signals_from_power)
         self.assertEqual(chosen, index)
         np.testing.assert_array_equal(res, self.signals_from_power[chosen])
+
+    def test_from_crc(self):
+        selector = selection.CRCSelection(2)
+
+        for _ in range(10):
+            _, sel = selector.select(self.signals)
+            self.assertEqual(sel, 0)
+
+        selector.report_crc_status(True)
+        _, sel = selector.select(self.signals)
+        self.assertEqual(sel, 0)
+
+        selector.report_crc_status(False)
+        _, sel = selector.select(self.signals)
+        self.assertEqual(sel, 1)
+
+        selector.report_crc_status(True)
+        _, sel = selector.select(self.signals)
+        self.assertEqual(sel, 1)
+
+        selector.report_crc_status(False)
+        _, sel = selector.select(self.signals)
+        self.assertEqual(sel, 0)
+
