@@ -13,13 +13,15 @@ let
     };
 
     pips = mach-nix.mkPython {
-      requirements = builtins.readFile ./requirements.txt;
+      requirements = builtins.replaceStrings
+        [ "PyQt5" ]
+        [ "" ]
+        (builtins.readFile ./requirements.txt);
     };
 in
   pkgs.mkShell {
     buildInputs = [
       pips
-      pkgs.python39
     ];
 
   }
