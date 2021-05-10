@@ -46,7 +46,7 @@ def make_frame_array(slots_per_frame: int):
 slots = 0
 selected = []
 errors = []
-fading = []
+fading_t = []
 
 for frame_number in range(frames):
     slots_per_frame = np.random.randint(1, 24)
@@ -57,7 +57,7 @@ for frame_number in range(frames):
         moded = modulator.modulate(symbols)
 
         recv, h = channel.run(moded)
-        fading.append(h)
+        fading_t.append(h)
 
         # selc, index = ad.diversity_technique.selection_from_power(recv)
         selc, index = selector.select(recv)
@@ -76,14 +76,14 @@ for frame_number in range(frames):
 
     print(f"frame_id: {frame_number}")
 
-selected = np.array(selected)
-errors = np.array(errors)
+selected_np = np.array(selected)
+errors_np = np.array(errors)
 
 print(f"Sent {slots} slots")
 total_errors = sum(errors)
 print(f"Had {total_errors} errors ({100 * total_errors / slots} %)")
 for branch in range(branches):
-    selected_at = np.where(selected == branch)[0]
+    selected_at = np.where(selected_np == branch)[0]
 
     had_slots = len(selected_at)
     had_errors = sum(errors[selected_at])
@@ -94,7 +94,7 @@ for branch in range(branches):
     else:
         print(f"Branch {branch} was not selected at all")
 
-fading = np.transpose(fading)
+fading = np.transpose(fading_t)  # type: ignore
 
 fig, ax = plt.subplots(2)
 ax[0].plot(range(slots), errors)
