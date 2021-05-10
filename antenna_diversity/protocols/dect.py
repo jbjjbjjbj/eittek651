@@ -169,7 +169,7 @@ class Full():
         Returns the result of the 4-bit X-CRC as described in DECT.
         It CRCs everything it gets as input and does NOT pick out m number of test bits.
         The N in N-bit X-CRC should depend on the modulation level.
-        See https://www.zlib.net/crc_v3.txt for implementation details.
+        See https://www.zlib.net/crc_v3.txt for info about CRCs.
         """
         # All crc operations handle in the first 16 bits of CRC.
         # These 16 bits are split in 3 parts

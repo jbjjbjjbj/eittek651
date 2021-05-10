@@ -51,8 +51,3 @@ $ snakeviz hello.prof
 ```
 
 
-## Misc
-
-Remember to write things that should be exposed to the user in the relevant `__init__.py` file.
-Functions are in this sense "more private" than methods of an object which is exposed.
-This extra layer of encapsulation is there since we want to test pure functions with docstrings.
