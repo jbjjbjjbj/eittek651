@@ -15,8 +15,6 @@ It will output the following data:
 To make the plot readable only 100 frames are sent through, but this can be
 adjusted.
 
-The amount of slots in a frame is a random number between 1 and 23.
-
 To make comparison between algorithms easy, the generator is seeded before.
 Therefore each run will have CRC errors etc. in the same place each time.
 """
@@ -26,16 +24,18 @@ np.random.seed(2)
 
 encoder = ad.encoding.SymbolEncoder(2)
 modulator = ad.modulation.GFSK()
-branches = 4
+branches = 2
 channel = ad.channel.RayleighAWGNChannel(branches, 10)
 
 selector = ad.diversity_technique.CRCSelection(branches)
 
-frames = 100
+frames = 1000
+slots_to_plot = 300
 bits_per_slot = 440
+slots_per_frame = 1
 
 
-def make_frame_array(slots_per_frame: int):
+def make_frame_array():
     frame_array = []
     for i in range(slots_per_frame):
         data = ad.protocols.dect.Full.with_random_payload().to_bytes()
@@ -49,9 +49,7 @@ errors = []
 fading_t = []
 
 for frame_number in range(frames):
-    slots_per_frame = np.random.randint(1, 24)
-
-    frame = make_frame_array(slots_per_frame)
+    frame = make_frame_array()
     for slot in frame:
         symbols = encoder.encode_msb(slot)
         moded = modulator.modulate(symbols)
@@ -86,7 +84,7 @@ for branch in range(branches):
     selected_at = np.where(selected_np == branch)[0]
 
     had_slots = len(selected_at)
-    had_errors = sum(errors[selected_at])
+    had_errors = sum(errors_np[selected_at])
     if had_slots != 0:
         print(f"Branch {branch}:")
         print(f"  slots: {had_slots} ({100 * had_slots / slots} % of total)")
@@ -97,9 +95,10 @@ for branch in range(branches):
 fading = np.transpose(fading_t)  # type: ignore
 
 fig, ax = plt.subplots(2)
-ax[0].plot(range(slots), errors)
-ax[0].plot(range(slots), selected)
+slots = np.arange(slots_to_plot)
+ax[0].plot(slots, errors_np[slots])
+ax[0].plot(slots, selected_np[slots])
 for fade in fading:
-    ax[1].plot(range(slots), fade)
+    ax[1].plot(slots, fade[slots])
 
 fig.savefig("out.png")
