@@ -29,7 +29,7 @@ modulator = ad.modulation.GFSK()
 branches = 4
 channel = ad.channel.RayleighAWGNChannel(branches, 10)
 
-selector = ad.diversity_technique.CRCSelection(branches)
+selector = ad.diversity_technique.selection.ReneDif()
 
 frames = 100
 bits_per_slot = 440
@@ -58,8 +58,8 @@ for frame_number in range(frames):
 
         recv, h = channel.run(moded)
         fading_t.append(h)
-
-        # selc, index = ad.diversity_technique.selection_from_power(recv)
+        # selc, last_power, index = ad.diversity_technique.renedif.dif(
+        #    last_power, recv, index)
         selc, index = selector.select(recv)
         demod = modulator.demodulate(selc)
 
@@ -70,7 +70,7 @@ for frame_number in range(frames):
         selected.append(index)
         errors.append(error)
 
-        selector.report_crc_status(not error)
+        #selector.report_crc_status(not error)
 
     channel.frame_sent()
 
@@ -86,7 +86,7 @@ for branch in range(branches):
     selected_at = np.where(selected_np == branch)[0]
 
     had_slots = len(selected_at)
-    had_errors = sum(errors[selected_at])
+    had_errors = sum(errors_np[selected_at])
     if had_slots != 0:
         print(f"Branch {branch}:")
         print(f"  slots: {had_slots} ({100 * had_slots / slots} % of total)")
