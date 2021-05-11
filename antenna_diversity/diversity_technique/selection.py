@@ -46,7 +46,7 @@ def selection_from_power(signal_matrix: np.ndarray,
     signal_powers = np.empty(shape=(sh[0]))
     for i, signal_row in enumerate(signal_matrix):
         signal_powers[i] = calculate_power(
-                signal_row[: int(nr_bits * over_sample_rate)])
+            signal_row[: int(nr_bits * over_sample_rate)])
 
     index = np.argmax(signal_powers)
     return signal_matrix[index], int(index)
@@ -64,3 +64,37 @@ class CRCSelection:
 
     def select(self, signal_matrix: np.ndarray) -> t.Tuple[np.ndarray, int]:
         return signal_matrix[self.selected], self.selected
+
+
+# Range Enhancer Negative Erasure Diffential or R.E.N.E. Dif.
+
+class ReneDif:
+    def __init__(self):
+        """
+        #init internal variables
+        """
+        self.last_power = 0
+        self.chosen_branch = 0
+        self.received = 0
+
+    def select(self, rec):
+        """
+        Compares the power of the last signal with the power
+        of the current signal on the current branch.
+        Selection diversity is used if the signal power
+        of the current branch is lower than the last signal power.
+        """
+        if self.last_power == 0:
+            recieved, self.chosen_branch = selection_from_power(rec)
+            self.last_power = calculate_power(recieved)
+            return recieved, self.chosen_branch
+
+        else:
+            new_power = calculate_power(rec[self.chosen_branch])
+            if new_power >= self.last_power:
+                self.last_power = new_power
+                return rec[self.chosen_branch], self.chosen_branch
+            else:
+                recieved, self.chosen_branch = selection_from_power(rec)
+                self.last_power = calculate_power(recieved)
+                return recieved, self.chosen_branch
