@@ -76,6 +76,9 @@ class ReneDif:
         self.last_power = 0
         self.chosen_branch = 0
         self.received = 0
+        self.nr_bits = 4
+        self.over_sample_rate = 32
+        self.shift_branch = False
 
     def select(self, rec):
         """
@@ -84,17 +87,21 @@ class ReneDif:
         Selection diversity is used if the signal power
         of the current branch is lower than the last signal power.
         """
-        if self.last_power == 0:
+        if self.last_power == 0 or self.shift_branch == True:
             recieved, self.chosen_branch = selection_from_power(rec)
             self.last_power = calculate_power(recieved)
+            self.shift_branch = False
             return recieved, self.chosen_branch
 
         else:
-            new_power = calculate_power(rec[self.chosen_branch])
+            new_power = calculate_power(
+                rec[self.chosen_branch: int(self.nr_bits * self.over_sample_rate)])
             if new_power >= self.last_power:
+                self.last_power = calculate_power(rec[self.chosen_branch])
                 self.last_power = new_power
                 return rec[self.chosen_branch], self.chosen_branch
             else:
-                recieved, self.chosen_branch = selection_from_power(rec)
-                self.last_power = calculate_power(recieved)
-                return recieved, self.chosen_branch
+                self.shift_branch = True
+                self.last_power = calculate_power(rec[self.chosen_branch])
+                self.last_power = new_power
+                return rec[self.chosen_branch], self.chosen_branch
