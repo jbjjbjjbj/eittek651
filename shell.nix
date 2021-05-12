@@ -24,4 +24,8 @@ in
       pips
     ];
 
+    shellHook = ''
+        export MPLBACKEND="webagg"
+        '';
+
   }
