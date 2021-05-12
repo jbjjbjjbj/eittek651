@@ -27,7 +27,7 @@ modulator = ad.modulation.GFSK()
 branches = 2
 channel = ad.channel.RayleighAWGNChannel(branches, 10)
 
-selector = ad.diversity_technique.CRCSelection(branches)
+selector = ad.diversity_technique.selection.ReneDif()
 
 frames = 1000
 slots_to_plot = 300
@@ -56,8 +56,8 @@ for frame_number in range(frames):
 
         recv, h = channel.run(moded)
         fading_t.append(h)
-
-        # selc, index = ad.diversity_technique.selection_from_power(recv)
+        # selc, last_power, index = ad.diversity_technique.renedif.dif(
+        #    last_power, recv, index)
         selc, index = selector.select(recv)
         demod = modulator.demodulate(selc)
 
@@ -68,7 +68,7 @@ for frame_number in range(frames):
         selected.append(index)
         errors.append(error)
 
-        selector.report_crc_status(not error)
+        #selector.report_crc_status(not error)
 
     channel.frame_sent()
 

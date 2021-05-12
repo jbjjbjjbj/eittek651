@@ -46,7 +46,7 @@ def selection_from_power(signal_matrix: np.ndarray,
     signal_powers = np.empty(shape=(sh[0]))
     for i, signal_row in enumerate(signal_matrix):
         signal_powers[i] = calculate_power(
-                signal_row[: int(nr_bits * over_sample_rate)])
+            signal_row[: int(nr_bits * over_sample_rate)])
 
     index = np.argmax(signal_powers)
     return signal_matrix[index], int(index)
@@ -64,3 +64,45 @@ class CRCSelection:
 
     def select(self, signal_matrix: np.ndarray) -> t.Tuple[np.ndarray, int]:
         return signal_matrix[self.selected], self.selected
+
+
+# Range Enhancer Negative Erasure Diffential or R.E.N.E. Dif.
+
+class ReneDif:
+    def __init__(self):
+        """
+        #init internal variables
+        """
+        self.last_power = 0
+        self.chosen_branch = 0
+        self.received = 0
+        self.nr_bits = 4
+        self.over_sample_rate = 32
+        self.shift_branch = False
+
+    def select(self, signal_matrix: np.ndarray) -> t.Tuple[np.ndarray, int]:
+        """
+        Compares the power of the last signal with the power
+        of the current signal on the current branch.
+        Selection diversity is used if the signal power
+        of the current branch is lower than the last signal power.
+        """
+        if self.last_power == 0 or self.shift_branch is True:
+            recieved, self.chosen_branch = selection_from_power(signal_matrix)
+            self.last_power = calculate_power(recieved)
+            self.shift_branch = False
+            return recieved, self.chosen_branch
+
+        else:
+            new_power = calculate_power(
+                signal_matrix[self.chosen_branch]
+                [:int(self.nr_bits * self.over_sample_rate)])
+            if new_power >= self.last_power:
+                self.last_power = calculate_power(signal_matrix[self.chosen_branch])
+                self.last_power = new_power
+                return signal_matrix[self.chosen_branch], self.chosen_branch
+            else:
+                self.shift_branch = True
+                self.last_power = calculate_power(signal_matrix[self.chosen_branch])
+                self.last_power = new_power
+                return signal_matrix[self.chosen_branch], self.chosen_branch
