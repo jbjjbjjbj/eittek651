@@ -98,11 +98,11 @@ class ReneDif:
                 signal_matrix[self.chosen_branch]
                 [:int(self.nr_bits * self.over_sample_rate)])
             if new_power >= self.last_power:
-                self.last_power = calculate_power(signal_matrix[self.chosen_branch])
-                self.last_power = new_power
+                self.last_power = calculate_power(
+                    signal_matrix[self.chosen_branch])
                 return signal_matrix[self.chosen_branch], self.chosen_branch
             else:
                 self.shift_branch = True
-                self.last_power = calculate_power(signal_matrix[self.chosen_branch])
-                self.last_power = new_power
+                self.last_power = calculate_power(
+                    signal_matrix[self.chosen_branch])
                 return signal_matrix[self.chosen_branch], self.chosen_branch
