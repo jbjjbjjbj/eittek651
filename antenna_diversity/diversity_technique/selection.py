@@ -80,7 +80,7 @@ class ReneDif:
         self.over_sample_rate = 32
         self.shift_branch = False
 
-    def select(self, rec):
+    def select(self, rec: np.ndarray) -> np.ndarray:
         """
         Compares the power of the last signal with the power
         of the current signal on the current branch.
