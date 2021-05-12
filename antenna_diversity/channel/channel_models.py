@@ -15,14 +15,14 @@ import typing as t
 
 class RayleighAWGNChannel:
     def __init__(self, N: int, snr: float, frame_per_block: int = 3,
-                 interpolate_last: bool = True) -> None:
+                 intermediate_point: bool = True) -> None:
         """
             N: number of branches for the channel
             snr: the starting SNR of the channel in dB
             frame_per_block: Number of frames per channel block,
                 standard is 6 frames per block, equal to sending
                 at a coherence time of 60ms
-            interpolate_last: Whether to let the last fade in a block move
+            intermediate_point: Whether to let the last fade in a block move
                 towards the next block value.
 
             The channel is based on DECT frames, i.e. the channel
@@ -35,7 +35,7 @@ class RayleighAWGNChannel:
         self.frame_per_channel_block = frame_per_block
         self.h = self.__sample_rayleigh()
         self.h_next = np.empty(self.N)
-        self.interpolate_last = interpolate_last
+        self.intermediate_point = intermediate_point
 
     def run(self, signal: np.ndarray) -> t.Tuple[np.ndarray, np.ndarray]:
         """
@@ -63,13 +63,13 @@ class RayleighAWGNChannel:
         # Check if we interpolate is on and we are on the last of a block.
         # If yes we should sample the next rayleigh and make h the value in
         # between.
-        if self.interpolate_last and \
+        if self.intermediate_point and \
                 self.nr_frames_into_frame == (self.frame_per_channel_block-1):
 
             self.next_h = self.__sample_rayleigh()
             self.h = self.h + (self.next_h - self.h) / 2
         elif self.nr_frames_into_frame >= self.frame_per_channel_block:
-            if self.interpolate_last:
+            if self.intermediate_point:
                 self.h = self.next_h
             else:
                 self.h = self.__sample_rayleigh()
