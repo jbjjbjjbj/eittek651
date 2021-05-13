@@ -15,7 +15,7 @@ import typing as t
 
 class RayleighAWGNChannel:
     def __init__(self, N: int, snr: float, frame_per_block: int = 3,
-                 intermediate_point: bool = True) -> None:
+                 intermediate_point: int = 1) -> None:
         """
             N: number of branches for the channel
             snr: the starting SNR of the channel in dB
@@ -31,11 +31,13 @@ class RayleighAWGNChannel:
         """
         self.N = N
         self.snr = snr
-        self.nr_frames_into_frame = 0
+        self.nr_frames_into_block = 0
         self.frame_per_channel_block = frame_per_block
-        self.h = self.__sample_rayleigh()
-        self.h_next = np.empty(self.N)
         self.intermediate_point = intermediate_point
+        self.h = self.__sample_rayleigh()
+        self.next_h = self.__sample_rayleigh()
+        self.step_h = (self.next_h-self.h) / (self.intermediate_point+1)
+        
 
     def run(self, signal: np.ndarray) -> t.Tuple[np.ndarray, np.ndarray]:
         """
@@ -58,22 +60,22 @@ class RayleighAWGNChannel:
             and updates the channel h if the number of frames sendt
             is bigger then or equal to the frames per block
         """
-        self.nr_frames_into_frame += 1
+        self.nr_frames_into_block += 1
 
         # Check if we interpolate is on and we are on the last of a block.
         # If yes we should sample the next rayleigh and make h the value in
         # between.
-        if self.intermediate_point and \
-                self.nr_frames_into_frame == (self.frame_per_channel_block-1):
-
-            self.next_h = self.__sample_rayleigh()
-            self.h = self.h + (self.next_h - self.h) / 2
-        elif self.nr_frames_into_frame >= self.frame_per_channel_block:
-            if self.intermediate_point:
+        if self.nr_frames_into_block >= self.frame_per_channel_block:
+            if self.intermediate_point != 0:
                 self.h = self.next_h
+                self.next_h = self.__sample_rayleigh()
+                self.step_h = (self.next_h-self.h) / (self.intermediate_point+1)
             else:
                 self.h = self.__sample_rayleigh()
-            self.nr_frames_into_frame = 0
+            self.nr_frames_into_block = 0
+
+        elif self.nr_frames_into_block >= (self.frame_per_channel_block-self.intermediate_point):
+            self.h += self.step_h
 
     def __sample_rayleigh(self) -> np.ndarray:
         return np.transpose(np.random.rayleigh(
