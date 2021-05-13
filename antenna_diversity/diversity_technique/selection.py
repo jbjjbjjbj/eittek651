@@ -78,7 +78,6 @@ class ReneDif:
         self.received = 0
         self.nr_bits = 4
         self.over_sample_rate = 32
-        self.shift_branch = False
 
     def select(self, signal_matrix: np.ndarray) -> t.Tuple[np.ndarray, int]:
         """
@@ -86,23 +85,16 @@ class ReneDif:
         of the current signal on the current branch.
         Selection diversity is used if the signal power
         of the current branch is lower than the last signal power.
-        """
-        if self.last_power == 0 or self.shift_branch is True:
+        """   
+        new_power = calculate_power(
+            signal_matrix[self.chosen_branch]
+            [:int(self.nr_bits * self.over_sample_rate)])
+        if new_power >= self.last_power:
+            self.last_power = calculate_power(
+                signal_matrix[self.chosen_branch])
+            return signal_matrix[self.chosen_branch], self.chosen_branch
+        elif new_power < self.last_power:
             recieved, self.chosen_branch = selection_from_power(signal_matrix)
             self.last_power = calculate_power(recieved)
-            self.shift_branch = False
             return recieved, self.chosen_branch
 
-        else:
-            new_power = calculate_power(
-                signal_matrix[self.chosen_branch]
-                [:int(self.nr_bits * self.over_sample_rate)])
-            if new_power >= self.last_power:
-                self.last_power = calculate_power(
-                    signal_matrix[self.chosen_branch])
-                return signal_matrix[self.chosen_branch], self.chosen_branch
-            else:
-                self.shift_branch = True
-                self.last_power = calculate_power(
-                    signal_matrix[self.chosen_branch])
-                return signal_matrix[self.chosen_branch], self.chosen_branch
