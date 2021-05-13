@@ -17,7 +17,7 @@ class TestChannelModels(unittest.TestCase):
         self.assertEqual(len(h), 3)
 
     def test_frame_per_block(self):
-        chnl = RayleighAWGNChannel(3, 10, 3, False)
+        chnl = RayleighAWGNChannel(3, 10, 3, 0)
         h = chnl.h
 
         for _ in range(2):
@@ -32,7 +32,7 @@ class TestChannelModels(unittest.TestCase):
         self.assertFalse(equal)
 
     def test_frame_per_block_interpolate(self):
-        chnl = RayleighAWGNChannel(3, 10, 3, True)
+        chnl = RayleighAWGNChannel(3, 10, 3, 1)
         h = np.copy(chnl.h)
 
         chnl.frame_sent()

@@ -74,10 +74,10 @@ print(data_formodlling_gns)
 
 ch_1 = channel.channel_models.RayleighAWGNChannel(1, 0)
 ch_2 = channel_models.RayleighAWGNChannel(
-    1, 0, frame_per_block=3, intermediate_point=0)
+    1, 0, frame_per_block=3, intermediate_points=0)
 ch_3 = channel_models.RayleighAWGNChannel(
     1, 0, frame_per_block=4)
-ch_4 = channel_models.RayleighAWGNChannel(1,0, frame_per_block=4,intermediate_point=2)
+ch_4 = channel_models.RayleighAWGNChannel(1,0, frame_per_block=4,intermediate_points=2)
 ch_old = channel_models.RayleighAWGNChannelOld(1, 0)
 
 h_1 = np.empty(shape=(len(data_formodlling)))

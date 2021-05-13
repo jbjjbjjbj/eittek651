@@ -93,7 +93,7 @@ class ReneDif:
             self.last_power = calculate_power(
                 signal_matrix[self.chosen_branch])
             return signal_matrix[self.chosen_branch], self.chosen_branch
-        elif new_power < self.last_power:
+        else:
             recieved, self.chosen_branch = selection_from_power(signal_matrix)
             self.last_power = calculate_power(recieved)
             return recieved, self.chosen_branch
