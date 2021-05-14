@@ -132,7 +132,7 @@ def make_frame_array():
 run = 0
 
 start = time.time()
-while True:
+while len(snr_todo) > 0:
     frame = make_frame_array()
     for slot in frame:
         symbols = encoder.encode_msb(slot.to_bytes())
@@ -174,9 +174,6 @@ while True:
         duration = (end - start) / 10
         print(f"Run: {run}, time: {duration}s, snr_todo: ({len(snr_todo)}) {snr_values[snr_todo]}")
         start = end
-
-    if len(snr_todo) == 0:
-        break
 
 
 print(data)
