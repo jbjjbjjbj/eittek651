@@ -18,10 +18,7 @@ certainty = 20
 # Stop early at x number of errors. Make sure to scale together with
 # slots_per_frame, as this number number must include several different
 # h values.
-# Also a problem with the pbes measurement as that requires that all snrs have
-# the same number of runs, therefore it's kept at infinity.
-# stop_at_errors = 10000
-stop_at_errors = np.inf
+stop_at_errors = 100000
 snr_stop = 50
 snr_step = 2.5
 branches = 5
