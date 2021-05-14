@@ -4,9 +4,28 @@
 import numpy as np
 import math
 import typing as t
+from numba import jit, uint8
 
 # M = 2, 4, 16, 256
 M_allowlist: t.List[int] = [2, 4, 16, 256]
+
+
+@jit(nopython=True)
+def decode_msb_fast(symbols: np.ndarray, syms_per_byte: int, nbits: int) -> np.ndarray:
+    n = len(symbols)
+    nr_bytes = int(n / syms_per_byte)
+    res = np.empty(nr_bytes, dtype=np.ubyte)
+
+    for i in range(nr_bytes):
+        byte = 0
+        for s in range(syms_per_byte):
+            byte = byte << nbits
+            index = i * syms_per_byte + s
+            byte = (byte | symbols[index])
+
+        res[i] = byte
+
+    return res
 
 
 def gen_mask(n: int) -> int:
@@ -148,21 +167,9 @@ class SymbolEncoder:
         return symbols
 
     def decode_msb(self, symbols: np.ndarray) -> bytes:
-        n = len(symbols)
-        if n % self.syms_per_byte != 0:
+        if len(symbols) % self.syms_per_byte != 0:
             raise Exception("Unexpected length of symbols")
 
-        nr_bytes = int(n / self.syms_per_byte)
-        res = np.empty(nr_bytes, dtype=np.ubyte)
-
-        for i in range(nr_bytes):
-            byte = 0
-            for s in range(self.syms_per_byte):
-                byte = byte << self.nbits
-                index = i * self.syms_per_byte + s
-                byte = (byte | symbols[index])
-
-            res[i] = byte
-
+        res = decode_msb_fast(symbols, self.syms_per_byte, self.nbits)
         return res.tobytes()
 
