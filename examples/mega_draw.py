@@ -198,6 +198,7 @@ for i, algo_name in enumerate(algo_names):
     plt.yscale("log")
     plt.legend()
     plt.grid(True)
+    plt.savefig(f"{algo_name}_snrber.pdf")
 
     # Draw payload_error graph
     plt.figure()
@@ -209,11 +210,11 @@ for i, algo_name in enumerate(algo_names):
 
         plt.plot(snr_values, probs, label=f"N = {branch+1}")
 
-    plt.title(algo_name + " payload_error")
     plt.xlabel("SNR [dB]")
     plt.ylabel("Ratio of packets CRC errors")
     plt.legend()
     plt.grid(True)
+    plt.savefig(f"{algo_name}_payload_error.pdf")
 
     # Draw pbes graph
     plt.figure()
@@ -225,12 +226,9 @@ for i, algo_name in enumerate(algo_names):
 
         plt.plot(snr_values, probs, label=f"N = {branch+1}")
 
-    plt.title(algo_name + " payload_score")
     plt.xlabel("SNR [dB]")
     plt.ylabel("Payload Bit Error Score")
     plt.legend()
     plt.grid(True)
-
-
-plt.show()
+    plt.savefig(f"{algo_name}_payload_bit_error_score.pdf")
 
