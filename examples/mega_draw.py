@@ -172,7 +172,7 @@ while len(snr_todo) > 0:
     if run % 10 == 0:
         end = time.time()
         duration = (end - start) / 10
-        print(f"Run: {run}, time: {duration}s, snr_todo: ({len(snr_todo)}) {snr_values[snr_todo]}")
+        print(f"Run: {run}, time: {duration}s, last_snr_goal: {total}/{bit_goal}, snr_todo: ({len(snr_todo)}) {snr_values[snr_todo]}")
         start = end
 
 
