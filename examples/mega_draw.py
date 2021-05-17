@@ -94,6 +94,18 @@ def crc_recv_h(recv: np.ndarray, h: np.ndarray, symbols: np.ndarray, slot, state
     return err, n, crc_fail, pbes
 
 
+def power_and_crc_recv_h(recv: np.ndarray, h: np.ndarray, symbols: np.ndarray, slot, state_id)\
+        -> t.Tuple[int, int, bool, int]:
+    crc_fails = []
+    # loop over branches
+    for r in recv:
+        _, _, crc_fail, _ = rest(r, symbols, slot)
+        crc_fails.append(crc_fail)
+    answer, index = ad.diversity_technique.selection.selection_from_power_and_crc(recv, crc_fails)
+
+    return rest(answer, symbols, slot)
+
+
 def renedif_recv_h(recv: np.ndarray, h: np.ndarray, symbols: np.ndarray, slot, state_id)\
         -> t.Tuple[int, int, bool, int]:
     if state_id not in selector_dictionary:
