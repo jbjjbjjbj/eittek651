@@ -4,6 +4,7 @@
 import numpy as np
 import math
 from ..common import db_to_power
+import numba as nb
 
 # This file is for housing our noise models (like the AWGN function below).
 # Other fuctions could be added later if needed.
@@ -19,15 +20,18 @@ def awgn(nrElementOut, snr: float) -> np.ndarray:
     return W
 
 
+@nb.njit(parallel=True)
 def awgn_matrix(rows: int, columns: int, snr: float) -> np.ndarray:
     """
         Takes in number of rows and columns
         returns a matrix with size: rows x columns with complex normal
         distributed variables
     """
-    W = np.empty(shape=(rows, columns), dtype=complex)
-    sigma = math.sqrt((1 / db_to_power(snr)) * 1 / 2)
-    for row in range(rows):
+    # match python's builtin complex precision
+    W = np.empty(shape=(rows, columns), dtype=np.complex128)
+    # db_to_power not supported by numba
+    sigma = math.sqrt((1 / (10**(snr/10))) * 1 / 2)
+    for row in nb.prange(rows):
         W[row] = np.random.standard_normal(size=columns) * sigma + \
             1j * np.random.standard_normal(size=columns) * sigma
     return W
