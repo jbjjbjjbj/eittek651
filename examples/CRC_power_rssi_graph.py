@@ -24,11 +24,11 @@ ad_path.nop()
 
 encoder = ad.encoding.SymbolEncoder(2)
 modulator = ad.modulation.GFSK()
-branches = 3
-channel = ad.channel.RayleighAWGNChannel(branches, 10)
+branches = 2
+channel = ad.channel.RayleighAWGNChannel(branches, 8)
 
 #selector = ad.diversity_technique.selection.ReneDif()
-selector = ad.diversity_technique.selection.CRCSelection(branches)
+#selector = ad.diversity_technique.selection.CRCSelection(branches)
 
 frames = 1000
 slots_to_plot = 150
@@ -55,7 +55,6 @@ rssi_crc_power_selected = []
 crc_error_1 = []
 crc_error_2 = []
 selected_crc = []
-CRC_sel = ad.diversity_technique.selection.CRCSelection(2)
 
 for frame_number in range(frames):
     # make dect packet
@@ -72,31 +71,12 @@ for frame_number in range(frames):
     fading_t.append(h)
     # run selection diversity
     selc, index = ad.diversity_technique.selection.selection_from_power(recv)
+
     # save the rssi of each branch
     rssi_branch1.append(
         ad.diversity_technique.selection.calculate_power(recv[0][0:32 * 4]))
     rssi_branch2.append(
         ad.diversity_technique.selection.calculate_power(recv[1][0:32 * 4]))
-
-    # run CRC_sel diversity
-    selc, index2 = CRC_sel.select(recv)
-
-    # demodulate signals
-    rc_demodulated = modulator.demodulate(selc)
-
-    # decoded signals
-    rc_decoded = encoder.decode_msb(rc_demodulated)
-
-    # DECT packet
-    rc_packet = ad.protocols.dect.Full.from_bytes(rc_decoded)
-
-    if (rc_packet.a_field_crc_error_detected(
-    ) or rc_packet.x_crc_error_detected() or rc_packet.z_crc_error_detected()):
-        CRC_sel.report_crc_status(good=False)
-        selected_crc.append(1)
-    else:
-        CRC_sel.report_crc_status(good=True)
-        selected_crc.append(0)
 
     recieved = []
     recieved.append(modulator.demodulate(recv[0]))
@@ -112,18 +92,24 @@ for frame_number in range(frames):
     received_packet.append(ad.protocols.dect.Full.from_bytes(decoded[0]))
     received_packet.append(ad.protocols.dect.Full.from_bytes(decoded[1]))
 
+    packet_error_arr = []
+
     for i, packet in enumerate(received_packet):
-        if (packet.a_field_crc_error_detected(
-        ) or packet.x_crc_error_detected() or packet.z_crc_error_detected()):
+        if (packet.any_crc_error_detected()):
+            packet_error_arr.append(1)
             if(i == 0):
                 crc_error_1.append(1)
             else:
                 crc_error_2.append(1)
         else:
+            packet_error_arr.append(0)
             if(i == 0):
                 crc_error_1.append(0)
             else:
                 crc_error_2.append(0)
+
+    recv2, index2 = ad.diversity_technique.selection.selection_from_power_and_crc(
+        recv, packet_error_arr)
 
     slots += 1
     selected.append(index)
@@ -136,9 +122,11 @@ for frame_number in range(frames):
             ad.diversity_technique.selection.calculate_power(recv[1][0:32 * 4]))
     # save the selected branch for crc_sel diversity
     if(index2 == 0):
+        selected_crc.append(crc_error_1[len(crc_error_1) - 1])
         rssi_crc_power_selected.append(
             ad.diversity_technique.selection.calculate_power(recv[0][0:32 * 4]))
     else:
+        selected_crc.append(crc_error_2[len(crc_error_2) - 1])
         rssi_crc_power_selected.append(
             ad.diversity_technique.selection.calculate_power(recv[1][0:32 * 4]))
 
@@ -148,14 +136,14 @@ for frame_number in range(frames):
 
     #print(f"frame_id: {frame_number}")
 
-fig, (ax1, ax2) = plt.subplots(2, figsize=(10, 8))
+fig, (ax1, ax2) = plt.subplots(2, sharex=True, figsize=(10, 7))
 
 #fig, ax1 = plt.subplots()
 
-ax1.plot(rssi_branch1[50:150], '.--', color='#0072BD')
-ax1.plot(rssi_branch2[50:150], '.--', color='#D95319')
-ax1.plot(rssi_sel_selected[50:150], '-', color='#7E2F8E')
-ax1.plot(rssi_crc_power_selected[50:150], '-', color='#77AC30')
+ax1.plot(rssi_branch1[50:200], '.--', color='#0072BD')
+ax1.plot(rssi_branch2[50:200], '.--', color='#D95319')
+ax1.plot(rssi_sel_selected[50:200], '-', color='#7E2F8E')
+ax1.plot(rssi_crc_power_selected[50:200], '-', color='#77AC30')
 ax1.set_xlabel('# sample')
 ax1.set_ylabel('Power')
 ax1.legend(['Power branch 1', 'Power branch 2',
@@ -164,10 +152,10 @@ ax1.legend(['Power branch 1', 'Power branch 2',
 
 #ax2 = plt.twinx(ax1)
 
-x = np.arange(0, 150 - 50)
+x = np.arange(0, 200 - 50)
 
-ax2.scatter(x, crc_error_1[50:150], color='#0072BD', alpha=0.3)
-ax2.scatter(x, crc_error_2[50:150], color='#D95319', alpha=0.3)
+ax2.scatter(x, crc_error_1[50:200], color='#0072BD', alpha=0.3)
+ax2.scatter(x, crc_error_2[50:200], color='#D95319', alpha=0.3)
 # markerline1, stemlines1, baseline1 = ax2.stem(crc_error_1[50:150])
 # stemlines1.set_color('#0072BD')
 # markerline1.set_color('#0072BD')
@@ -176,17 +164,16 @@ ax2.scatter(x, crc_error_2[50:150], color='#D95319', alpha=0.3)
 # stemlines1.set_color('#D95319')
 # markerline2.set_color('#D95319')
 
-ax2.plot(selected_crc[50:150], color='#77AC30', alpha=0.3)
+
+ax2.plot(selected_crc[50:200], color='#77AC30', alpha=0.3)
 
 ax2.set_ylabel('CRC error')
-ax2.set_alpha(0.5)
+ax2.set_alpha(0.75)
 ax2.set_yticks([0, 1])
 ax2.set_yticklabels(['No', 'Yes'])
 
 ax2.legend(['Power and CRC selected ', 'CRC error branch 1',
             'CRC error branch 2',
             ])
-
-
-plt.savefig("crc_rssi_graph.pdf")
+plt.savefig("selection_rssi_plot.pdf")
 plt.show()
