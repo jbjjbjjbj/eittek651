@@ -119,8 +119,8 @@ def renedif_recv_h(recv: np.ndarray, h: np.ndarray, symbols: np.ndarray, slot, s
 
 
 # Her instilles listen af algorithmer der skal køres
-algorithms = [selection_recv_h, mrc_recv_h, crc_recv_h, egc_recv_h, renedif_recv_h]
-algo_names = ["Selection", "MRC", "CRC", "EGC", "rene"]
+algorithms = [selection_recv_h, mrc_recv_h, crc_recv_h, egc_recv_h, renedif_recv_h, power_and_crc_recv_h]
+algo_names = ["Selection", "MRC", "CRC", "EGC", "rene", "power_and_crc"]
 # algorithms = [renedif_recv_h, crc_recv_h]
 # algo_names = ["rene", "crc"]
 
@@ -163,7 +163,7 @@ while len(snr_todo) > 0:
                     prob = errors / total
                     # print(f"snr_index: {snr_index}, branch: {branch}, snr: {snr_values[snr_index]}, total: {total}, prob: {prob}")
                     if total > bit_goal or errors > stop_at_errors:
-                        break
+                        continue
 
                     done = False
 
