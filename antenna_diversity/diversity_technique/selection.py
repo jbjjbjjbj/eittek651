@@ -62,6 +62,7 @@ def selection_from_power_and_crc(signal_matrix: np.ndarray,
     For instance, any_crc_errors[2] returns True, if any CRC errror is present in the packet
     antenna 2 received.
     """
+
     sh = np.shape(signal_matrix)
     signal_powers = np.empty(shape=(sh[0]))
     for i, signal_row in enumerate(signal_matrix):
@@ -72,8 +73,8 @@ def selection_from_power_and_crc(signal_matrix: np.ndarray,
     # best first
     best_indices_and_powers = sorted(signal_powers_indices, key=lambda x: x[-1], reverse=True)
 
-    for i, crc_error in enumerate(any_crc_errors):
-        if not crc_error:
+    for i, _ in best_indices_and_powers:
+        if not any_crc_errors[i]:
             index = i
             break
     else:  # then
