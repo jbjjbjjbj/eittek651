@@ -52,6 +52,36 @@ def selection_from_power(signal_matrix: np.ndarray,
     return signal_matrix[index], int(index)
 
 
+def selection_from_power_and_crc(signal_matrix: np.ndarray,
+                                 any_crc_errors: t.List,
+                                 nr_bits: int = 4,
+                                 over_sample_rate: int = 32
+                                 ) -> t.Tuple[t.Any, int]:
+    """
+    Same as selection_from_power, but any_crc_errors is a list of bools.
+    For instance, any_crc_errors[2] returns True, if any CRC errror is present in the packet
+    antenna 2 received.
+    """
+    sh = np.shape(signal_matrix)
+    signal_powers = np.empty(shape=(sh[0]))
+    for i, signal_row in enumerate(signal_matrix):
+        signal_powers[i] = calculate_power(
+            signal_row[: int(nr_bits * over_sample_rate)])
+
+    signal_powers_indices = list(enumerate(signal_powers))
+    # best first
+    best_indices_and_powers = sorted(signal_powers_indices, key=lambda x: x[-1], reverse=True)
+
+    for i, crc_error in enumerate(any_crc_errors):
+        if not crc_error:
+            index = i
+            break
+    else:  # then
+        index = best_indices_and_powers[0][0]
+
+    return signal_matrix[index], int(index)
+
+
 class CRCSelection:
     def __init__(self, branches: int):
         self.branches = branches

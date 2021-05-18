@@ -49,3 +49,25 @@ class TestSelection(unittest.TestCase):
         _, sel = selector.select(self.signals)
         self.assertEqual(sel, 0)
 
+    def test_selection_from_power_and_crc(self):
+        chosen = 1
+        crc_errors = [True, False, True]
+        res, index = selection.selection_from_power_and_crc(self.signals_from_power,
+                                                            crc_errors)
+        self.assertEqual(chosen, index)
+        np.testing.assert_array_equal(res, self.signals_from_power[chosen])
+
+
+        chosen = 2
+        crc_errors = [True, False, True]
+        res, index = selection.selection_from_power_and_crc(self.signals_from_power,
+                                                            crc_errors)
+        self.assertFalse(chosen == index)
+
+        chosen = 2
+        crc_errors = [True, True, True]  # cover "else" in "for else"
+        res, index = selection.selection_from_power_and_crc(self.signals_from_power,
+                                                            crc_errors)
+        self.assertTrue(chosen == index)
+
+
