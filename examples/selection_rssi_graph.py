@@ -20,19 +20,17 @@ Therefore each run will have CRC errors etc. in the same place each time.
 """
 
 ad_path.nop()
-np.random.seed(2)
 
 encoder = ad.encoding.SymbolEncoder(2)
 modulator = ad.modulation.GFSK()
-branches = 2
+branches = 3
 channel = ad.channel.RayleighAWGNChannel(branches, 10)
 
 #selector = ad.diversity_technique.selection.ReneDif()
 selector = ad.diversity_technique.selection.CRCSelection(branches)
 
-
 frames = 1000
-slots_to_plot = 300
+slots_to_plot = 150
 bits_per_slot = 440
 slots_per_frame = 1
 
@@ -49,57 +47,45 @@ slots = 0
 selected = []
 errors = []
 fading_t = []
+rssi_branch1 = []
+rssi_branch2 = []
+rssi_branch3 = []
+rssi_selected = []
 
 for frame_number in range(frames):
     frame = make_frame_array()
     for slot in frame:
         symbols = encoder.encode_msb(slot)
         moded = modulator.modulate(symbols)
-
         recv, h = channel.run(moded)
         fading_t.append(h)
         selc, index = ad.diversity_technique.selection.selection_from_power(recv)
-        #selc, index = selector.select(recv)
-        demod = modulator.demodulate(selc)
-
-        unpacked = ad.protocols.dect.Full.from_bytes(encoder.decode_msb(demod))
-        error = unpacked.any_crc_error_detected()
-
+        rssi_branch1.append(ad.diversity_technique.selection.calculate_power(recv[0][0:32*4]))
+        rssi_branch2.append(ad.diversity_technique.selection.calculate_power(recv[1][0:32*4]))
+        rssi_branch3.append(ad.diversity_technique.selection.calculate_power(recv[2][0:32*4]))
         slots += 1
         selected.append(index)
-        errors.append(error)
+        if(index  == 0):
+            rssi_selected.append(ad.diversity_technique.selection.calculate_power(recv[0][0:32*4]))
+        elif(index == 1):
+            rssi_selected.append(ad.diversity_technique.selection.calculate_power(recv[1][0:32*4]))
+        else:
+            rssi_selected.append(ad.diversity_technique.selection.calculate_power(recv[2][0:32*4]))
 
         #selector.report_crc_status(not error)
 
     channel.frame_sent()
 
-    print(f"frame_id: {frame_number}")
+    #print(f"frame_id: {frame_number}")
 
-selected_np = np.array(selected)
-errors_np = np.array(errors)
 
-print(f"Sent {slots} slots")
-total_errors = sum(errors)
-print(f"Had {total_errors} errors ({100 * total_errors / slots} %)")
-for branch in range(branches):
-    selected_at = np.where(selected_np == branch)[0]
 
-    had_slots = len(selected_at)
-    had_errors = sum(errors_np[selected_at])
-    if had_slots != 0:
-        print(f"Branch {branch}:")
-        print(f"  slots: {had_slots} ({100 * had_slots / slots} % of total)")
-        print(f"  errors: {had_errors} ({100 * had_errors / had_slots} %)")
-    else:
-        print(f"Branch {branch} was not selected at all")
 
-fading = np.transpose(fading_t)  # type: ignore
-
-fig, ax = plt.subplots(2)
-slots = np.arange(slots_to_plot)
-ax[0].plot(slots, errors_np[slots])
-ax[0].plot(slots, selected_np[slots])
-for fade in fading:
-    ax[1].plot(slots, fade[slots])
-
-fig.savefig("out.png")
+plt.plot(rssi_branch1[50:150], '.--')
+plt.plot(rssi_branch2[50:150], '.--')
+plt.plot(rssi_branch3[50:150], '.--')
+plt.plot(rssi_selected[50:150],'-' )
+plt.legend(['Branch 1', 'Branch 2', 'Branch 3', 'Selected branch'])
+plt.xlabel('Sample number')
+plt.ylabel('Power')
+plt.savefig("selection_rssi_plot.pdf")
