@@ -57,6 +57,10 @@ class TestFull(unittest.TestCase):
         self.assertFalse(self.packet.a_field_crc_error_detected())
         self.assertTrue(self.mutated_packet.a_field_crc_error_detected())
 
+    def test_crc_drops_packet(self):
+        self.assertFalse(self.packet.crc_drops_packet())
+        self.assertTrue(self.mutated_packet.crc_drops_packet())
+
     def test_any_crc(self):
         self.assertFalse(self.packet.any_crc_error_detected())
         self.assertTrue(self.mutated_packet.any_crc_error_detected())

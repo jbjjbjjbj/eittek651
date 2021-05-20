@@ -157,6 +157,9 @@ class Full():
         z_crc = self.xz_field & 0x0F
         return z_crc != x_crc
 
+    def crc_drops_packet(self) -> bool:
+        return self.x_crc_error_detected() or self.a_field_crc_error_detected()
+
     def any_crc_error_detected(self) -> bool:
         """
         Checks if any error is detected by the CRCs.
