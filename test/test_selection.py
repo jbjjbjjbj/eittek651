@@ -70,4 +70,11 @@ class TestSelection(unittest.TestCase):
                                                             crc_errors)
         self.assertTrue(chosen == index)
 
+        # Catch a bug where the first non error crc branch was chosen, even
+        # if it had worse snr
+        chosen = 2
+        crc_errors = [False, False, False]  # cover "else" in "for else"
+        res, index = selection.selection_from_power_and_crc(self.signals_from_power,
+                                                            crc_errors)
+        self.assertEqual(chosen, index)
 
