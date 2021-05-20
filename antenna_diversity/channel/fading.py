@@ -33,7 +33,6 @@ class RayleighFader:
 
     def get_samples(self, n: int) -> np.ndarray:
         h = np.empty(n)
-
         # Fill out the first values with the fading value from last call to
         # `get_samples`
         number_from_last = min(self.prev_left, n)
