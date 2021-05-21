@@ -2,7 +2,7 @@ import ad_path
 import antenna_diversity as ad
 import numpy as np
 import matplotlib.pyplot as plt
-
+import math
 """
 This file will show the insights of a chosen selection algorithm.
 Very nice for seing what is actually done.
@@ -26,7 +26,7 @@ modulator = ad.modulation.GFSK()
 branches = 3
 channel = ad.channel.RayleighAWGNChannel(branches, 10)
 
-#selector = ad.diversity_technique.selection.ReneDif()
+# selector = ad.diversity_technique.selection.ReneDif()
 selector = ad.diversity_technique.selection.CRCSelection(branches)
 
 frames = 1000
@@ -41,6 +41,10 @@ def make_frame_array():
         data = ad.protocols.dect.Full.with_random_payload().to_bytes()
         frame_array.append(data)
     return frame_array
+
+
+def calculate_db(input):
+    return 10 * math.log10(input)
 
 
 slots = 0
@@ -59,33 +63,39 @@ for frame_number in range(frames):
         moded = modulator.modulate(symbols)
         recv, h = channel.run(moded)
         fading_t.append(h)
-        selc, index = ad.diversity_technique.selection.selection_from_power(recv)
-        rssi_branch1.append(ad.diversity_technique.selection.calculate_power(recv[0][0:32*4]))
-        rssi_branch2.append(ad.diversity_technique.selection.calculate_power(recv[1][0:32*4]))
-        rssi_branch3.append(ad.diversity_technique.selection.calculate_power(recv[2][0:32*4]))
+        selc, index = ad.diversity_technique.selection.selection_from_power(
+            recv)
+        rssi_branch1.append(calculate_db(
+            ad.diversity_technique.selection.calculate_power(recv[0][0:32 * 4])))
+        rssi_branch2.append(calculate_db(
+            ad.diversity_technique.selection.calculate_power(recv[1][0:32 * 4])))
+        rssi_branch3.append(calculate_db(
+            ad.diversity_technique.selection.calculate_power(recv[2][0:32 * 4])))
         slots += 1
         selected.append(index)
-        if(index  == 0):
-            rssi_selected.append(ad.diversity_technique.selection.calculate_power(recv[0][0:32*4]))
+        if(index == 0):
+            rssi_selected.append(calculate_db(
+                ad.diversity_technique.selection.calculate_power(recv[0][0:32 * 4])))
         elif(index == 1):
-            rssi_selected.append(ad.diversity_technique.selection.calculate_power(recv[1][0:32*4]))
+            rssi_selected.append(calculate_db(
+                ad.diversity_technique.selection.calculate_power(recv[1][0:32 * 4])))
         else:
-            rssi_selected.append(ad.diversity_technique.selection.calculate_power(recv[2][0:32*4]))
+            rssi_selected.append(calculate_db(
+                ad.diversity_technique.selection.calculate_power(recv[2][0:32 * 4])))
 
-        #selector.report_crc_status(not error)
+        # selector.report_crc_status(not error)
 
     channel.frame_sent()
 
-    #print(f"frame_id: {frame_number}")
+    # print(f"frame_id: {frame_number}")
 
-
-
-
+plt.figure(figsize=(8, 5))
 plt.plot(rssi_branch1[50:150], '.--')
 plt.plot(rssi_branch2[50:150], '.--')
 plt.plot(rssi_branch3[50:150], '.--')
-plt.plot(rssi_selected[50:150],'-' )
+plt.plot(rssi_selected[50:150], '-')
 plt.legend(['Branch 1', 'Branch 2', 'Branch 3', 'Selected branch'])
-plt.xlabel('Sample number')
-plt.ylabel('Power')
+plt.xlabel('Packet number [-]')
+plt.ylabel('Power [dB]')
 plt.savefig("selection_rssi_plot.pdf")
+plt.show()
