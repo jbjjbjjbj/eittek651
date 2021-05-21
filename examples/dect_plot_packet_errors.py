@@ -24,9 +24,9 @@ for snr in snrs_db:
 
     modulator = ad.modulation.GFSK()
 
-    modem = ad.encoding.SymbolEncoder(2)
+    encoder = ad.encoding.SymbolEncoder(2)
 
-    symbols = [modem.encode_msb(pb) for pb in packets_bytes]
+    symbols = [encoder.encode_msb(pb) for pb in packets_bytes]
 
     modulated = [modulator.modulate(s) for s in symbols]
 
@@ -44,7 +44,7 @@ for snr in snrs_db:
 
     received_packets = [
         ad.protocols.dect.Full.from_bytes(
-            modem.decode_msb(d)) for d in demodulated]
+            encoder.decode_msb(d)) for d in demodulated]
     received_packets_bytes = [rp.to_bytes() for rp in received_packets]
 
     a_crc_detecteds = [rp.a_field_crc_error_detected()
