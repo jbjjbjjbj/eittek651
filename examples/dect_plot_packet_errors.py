@@ -9,7 +9,7 @@ import antenna_diversity as ad
 ad_path.nop()
 
 
-nr_packets = 75
+nr_packets = 2000
 snrs_db = np.arange(-5, 25, 1)
 x_crc_error_ratios = []
 z_crc_error_ratios = []
@@ -91,4 +91,4 @@ df = pd.DataFrame(
 )
 
 
-df.plot(xlabel="SNR [dB]").get_figure().savefig("lol2.png")
+df.plot(ylabel="Ratio [-]", xlabel="SNR [dB]", figsize=(8.0, 4.8), grid=True).get_figure().savefig("lol2.pdf")
