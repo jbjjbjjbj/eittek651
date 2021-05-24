@@ -38,7 +38,7 @@ def selection_from_power(signal_matrix: np.ndarray,
         over_sample_rate is the oversamplerate used to make the baseband representation in the gfsk module
 
         nr_bits = 4 is set as it is the common number of bits used in physical devices
-        over_sample_rate = 32 is the same deafault as the gfsk module
+        over_sample_rate = 32 is the same default as the gfsk module
 
         returns the signal y after selection and the index of the chosen h i.e. the chosen branch
     """
