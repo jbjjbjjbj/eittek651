@@ -50,7 +50,7 @@ def rest(hat_recv: np.ndarray, symbols: np.ndarray, slot) -> t.Tuple[int, int, b
 
     err, n = ad.common.count_symbol_errors(symbols, hat_symbols)
 
-    crc_fail = unpacked.any_crc_error_detected()
+    crc_fail = unpacked.crc_drops_packet()
     if crc_fail:
         pbes = crc_fail_penalty
     else:
