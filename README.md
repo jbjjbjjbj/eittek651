@@ -1,5 +1,7 @@
 # eittek651
-Yo hvordan sker det
+
+Software for bachalor projekt, simulating antenna diversity selection algorithms.
+The folder `antenna_diversity` contains the framework for writing simulations, while `examples` contains simulations used in the report.
 
 ## Install Libraries
 
