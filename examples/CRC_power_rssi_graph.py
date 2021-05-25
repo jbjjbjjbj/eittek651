@@ -151,8 +151,8 @@ ax1.plot(rssi_branch2[50:200], '.--', color='#D95319')
 ax1.plot(rssi_sel_selected[50:200], '-', color='#7E2F8E')
 ax1.plot(rssi_crc_power_selected[50:200], '-', color='#77AC30')
 ax1.set_ylabel('Power [dB]')
-ax1.legend(['Power branch 1', 'Power branch 2',
-           'Normal selection', 'Power and CRC'])
+ax1.legend(['Power of branch 1', 'Power of branch 2',
+           'Selection technique', 'Power and CRC technique'])
 
 
 #ax2 = plt.twinx(ax1)
@@ -178,7 +178,7 @@ ax2.set_alpha(0.75)
 ax2.set_yticks([0, 1])
 ax2.set_yticklabels(['No', 'Yes'])
 
-ax2.legend(['Power and CRC selected ', 'CRC error branch 1',
+ax2.legend(['Power and CRC technique', 'CRC error branch 1',
             'CRC error branch 2',
             ])
 plt.savefig("Power_and_crc.pdf")

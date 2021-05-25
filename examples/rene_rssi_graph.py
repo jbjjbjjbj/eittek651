@@ -110,14 +110,14 @@ for frame_number in range(frames):
 
     #print(f"frame_id: {frame_number}")
 
-plt.figure(figsize=(8, 6))
+plt.figure(figsize=(8, 4))
 plt.plot(rssi_branch1[50:150], '.--', color='#0072BD')
 plt.plot(rssi_branch2[50:150], '.--', color='#D95319')
 plt.plot(rssi_sel_selected[50:150], '-', color='#7E2F8E')
 plt.plot(rssi_diff_power_selected[50:150], '-', color='#77AC30')
 plt.ylabel('Power [dB]')
 plt.xlabel('Packet number [-]')
-plt.legend(['Power branch 1', 'Power branch 2',
-           'Normal selection', 'Power and CRC'])
+plt.legend(['Power of branch 1', 'Power of branch 2',
+           'Selection technique', 'Differential technique'], loc='lower left')
 plt.savefig("rene_rssi_graph.pdf")
 plt.show()
